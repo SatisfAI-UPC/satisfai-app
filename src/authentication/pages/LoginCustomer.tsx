@@ -66,7 +66,7 @@ function LoginCustomer({loginCustomer}) {
                 >
                     Login
                 </Button>
-                <p>
+                <p className={"text-center"}>
                     Don't have an account?&nbsp;
                     <Link to={"/signup"} className="text-primary font-medium">
                         Sign up

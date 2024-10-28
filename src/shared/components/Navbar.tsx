@@ -1,4 +1,7 @@
 import { Link } from "react-router-dom";
+import {Button} from "@nextui-org/button";
+import {  Dropdown,  DropdownTrigger,  DropdownMenu,  DropdownSection,  DropdownItem} from "@nextui-org/dropdown";
+import {Avatar} from "@nextui-org/react";
 
 // @ts-ignore
 function Navbar({ user, logout }) {
@@ -15,30 +18,56 @@ function Navbar({ user, logout }) {
                     </div>
                     <div>
                         {user?.role === "CUSTOMER" && (
-                            <ul className="flex list-none gap-4">
-                                <li><Link to={"/explore-companies"}>Companies</Link></li>
-                                <li><Link to={"/customer-reviews"}>Reviews</Link></li>
-                                <li><Link to={"/customer-surveys"}>Surveys</Link></li>
+                            <ul className="flex list-none gap-8 font-medium">
+                                <li><Link to={"/explore-companies"} className={"link-primary"}>Companies</Link></li>
+                                <li><Link to={"/customer-reviews"} className={"link-primary"}>Reviews</Link></li>
+                                <li><Link to={"/customer-surveys"} className={"link-primary"}>Surveys</Link></li>
                             </ul>
                         )}
                         {user?.role === "COMPANY" && (
-                            <ul className="flex list-none gap-4">
-                                <li><Link to={"/company-surveys"}>Surveys</Link></li>
-                                <li><Link to={"/company-profile"}>Profile</Link></li>
-                                <li><Link to={"/company-billing"}>Billing</Link></li>
-                                <li><Link to={"/explore-companies"}>Companies</Link></li>
+                            <ul className="flex list-none gap-8 font-medium">
+                                <li><Link to={"/company-surveys"} className={"link-primary"}>Surveys</Link></li>
+                                <li><Link to={"/company-profile"} className={"link-primary"}>Profile</Link></li>
+                                <li><Link to={"/company-billing"} className={"link-primary"}>Billing</Link></li>
+                                <li><Link to={"/explore-companies"} className={"link-primary"}>Companies</Link></li>
                             </ul>
                         )}
                     </div>
                     <div>
                         {!user && (
                             <ul className="flex list-none gap-4">
-                                <li><Link to={"/login-customer"}>Customer</Link></li>
-                                <li><Link to={"/login-company"}>Company</Link></li>
+                                <li>
+                                    <Link to={"/login-customer"}>
+                                        <Button className={"button-primary"}>Customer</Button>
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to={"/login-company"}>
+                                        <Button className={"button-primary"}>Company</Button>
+                                    </Link>
+                                </li>
                             </ul>
                         )}
                         {user && (
-                            <button onClick={logout}>Logout</button>
+                            <Dropdown>
+                                <DropdownTrigger>
+                                    <Avatar className={"cursor-pointer"}
+                                        alt={user?.name}
+                                        src={user?.avatar}
+                                    />
+                                </DropdownTrigger>
+                                <DropdownMenu aria-label="Static Actions">
+                                    <DropdownItem>
+                                        <Link to={`${user?.role === "CUSTOMER" ? '/customer-profile' : 'company-profile'}`}>
+                                            User
+                                        </Link>
+                                    </DropdownItem>
+                                    <DropdownItem
+                                        onClick={logout}>
+                                        Logout
+                                    </DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                         )}
                     </div>
                 </div>

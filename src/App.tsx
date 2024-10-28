@@ -6,7 +6,6 @@ import CompanyProfile from "./company/pages/CompanyProfile.tsx";
 import LoginCompany from "./authentication/pages/LoginCompany.tsx";
 import LoginCustomer from "./authentication/pages/LoginCustomer.tsx";
 import SignUp from "./authentication/pages/SignUp.tsx";
-import SignUpCustomer from "./authentication/pages/SignUpCustomer.tsx";
 import { useState } from "react";
 import CompanySurveys from "./company/pages/CompanySurveys.tsx";
 import CompanyBilling from "./company/pages/CompanyBilling.tsx";
@@ -44,7 +43,7 @@ function App() {
             <Routes>
                 <Route element={<Layout user={user} logout={logout} />}>
                     {/* Auth Routes */}
-                    <Route element={<ProtectedRoute isAllowed={user === null} redirectPath="/" />}>
+                    <Route element={<ProtectedRoute isAllowed={user == null} redirectPath="/" />}>
                         <Route path="/login-company" element={<LoginCompany loginCompany={loginCompany} />} />
                         <Route path="/login-customer" element={<LoginCustomer loginCustomer={loginCustomer} />} />
                         <Route path="/signup" element={<SignUp />} />

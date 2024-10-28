@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.button-primary {
+  @apply bg-primary text-white font-medium;
+}
+
+.button-secondary {
+    @apply bg-secondary font-medium;
+}
+
+.link-primary {
+    @apply font-medium;
+    @apply hover:text-primary duration-200;
+}
