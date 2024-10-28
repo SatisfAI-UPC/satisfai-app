@@ -9,7 +9,7 @@ function Navbar({ user, logout }) {
                     <div>
                         <Link to="/">
                             <img
-                                className="h-9 w-auto"
+                                className="h-8 md:h-10 w-auto"
                                 src="/src/assets/satisfai-logo.png" alt="logo"/>
                         </Link>
                     </div>
