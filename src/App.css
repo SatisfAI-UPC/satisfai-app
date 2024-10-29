@@ -11,6 +11,10 @@
     @apply bg-secondary font-medium;
 }
 
+.button-tertiary {
+    @apply bg-tertiary font-medium text-white;
+}
+
 .link-primary {
     @apply font-medium;
     @apply hover:text-primary duration-200;

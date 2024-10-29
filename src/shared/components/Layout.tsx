@@ -5,8 +5,7 @@ import Navbar from "./Navbar";
 const Layout = ({ user, logout }) => {
     const location = useLocation();
     const authPaths = [
-        "/login-company",
-        "/login-customer",
+        "/login",
         "/signup",
     ];
 

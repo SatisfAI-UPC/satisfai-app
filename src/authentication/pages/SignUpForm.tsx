@@ -1,13 +1,16 @@
-import {Button} from "@nextui-org/button";
+import {Link} from "react-router-dom";
 import {Input} from "@nextui-org/react";
 import {useState} from "react";
-import {Link} from "react-router-dom";
 import {Checkbox} from "@nextui-org/checkbox";
+import {Button} from "@nextui-org/button";
 
-function LoginCompany({loginCompany}) {
+function SignUpForm() {
     const [isVisible, setIsVisible] = useState(false);
+    const [isCompany, setIsCompany] = useState(true);
 
     const toggleVisibility = () => setIsVisible(!isVisible);
+
+    const toggleCompany = () => setIsCompany(!isCompany);
 
     return (
         <div className={"min-h-screen flex items-center justify-center"}>
@@ -16,18 +19,28 @@ function LoginCompany({loginCompany}) {
                     <img
                         src={"src/assets/satisfai-icon.png"} alt={"SatisfAI"}
                         className={"w-12 md:w-16 mx-auto"}/>
-                    <p className={"font-bold text-primary"}>Company</p>
                 </Link>
                 <h1 className={"font-bold text-xl md:text-5xl text-center"}>
-                    Login Company
+                    Sign Up
                 </h1>
-                <p className="font-medium text-center">
-                    Are you a customer?&nbsp;
-                    <Link to={"/login-customer"} className="text-primary font-medium">
-                        Log in here
-                    </Link>
-                </p>
                 <div className={"flex flex-col gap-2"}>
+                    <div className={"flex gap-2 w-full"}>
+                        <Button
+                            className={`w-full font-medium ${isCompany ? 'bg-primary text-white' : ''}`}
+                            onClick={toggleCompany}>
+                            I'm company
+                        </Button>
+                        <Button
+                            className={`w-full font-medium ${isCompany ? '' : 'bg-primary text-white'}`}
+                            onClick={toggleCompany}>
+                            I'm customer
+                        </Button>
+                    </div>
+                    <Input
+                        type="email"
+                        label="Name"
+                        variant="bordered"
+                    />
                     <Input
                         type="email"
                         label="Email"
@@ -50,26 +63,21 @@ function LoginCompany({loginCompany}) {
                         type={isVisible ? "text" : "password"}
                     />
                 </div>
-                <div className={"flex items-center justify-between w-full"}>
+                <div className={""}>
                     <Checkbox>
-                        Remember me
+                        I agree to all the <Link to={"/"} className={"text-primary underline"}>Terms and Privacy
+                        Policies</Link>
                     </Checkbox>
-                    <Link
-                        to="/"
-                        className="font-medium text-primary">
-                        Forgot your password?
-                    </Link>
                 </div>
                 <Button
-                    className="bg-secondary w-full"
-                    onClick={loginCompany}
+                    className="bg-secondary w-full font-medium"
                 >
-                    Login
+                    Sign up
                 </Button>
-                <p className={"text-center"}>
-                    Don't have an account?&nbsp;
-                    <Link to={"/signup"} className="text-primary font-medium">
-                        Sign up
+                <p className="font-medium text-center">
+                    Already have an account?&nbsp;
+                    <Link to={"/login"} className="text-primary font-medium">
+                        Log in here
                     </Link>
                 </p>
             </div>
@@ -77,4 +85,4 @@ function LoginCompany({loginCompany}) {
     );
 }
 
-export default LoginCompany;
+export default SignUpForm;

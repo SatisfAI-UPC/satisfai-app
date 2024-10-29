@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
 import {Button} from "@nextui-org/button";
-import {  Dropdown,  DropdownTrigger,  DropdownMenu,  DropdownSection,  DropdownItem} from "@nextui-org/dropdown";
+import {  Dropdown,  DropdownTrigger,  DropdownMenu,  DropdownItem} from "@nextui-org/dropdown";
 import {Avatar} from "@nextui-org/react";
 
 // @ts-ignore
 function Navbar({ user, logout }) {
     return (
-        <div className="bg-white p-2 md:p-4">
+        <div className="bg-white p-2 md:p-4 rounded-2xl">
             <div className="container mx-auto">
                 <div className="flex justify-between items-center">
                     <div>
@@ -37,13 +37,13 @@ function Navbar({ user, logout }) {
                         {!user && (
                             <ul className="flex list-none gap-4">
                                 <li>
-                                    <Link to={"/login-customer"}>
-                                        <Button className={"button-primary"}>Customer</Button>
+                                    <Link to={"/login"}>
+                                        <Button className={"font-medium"}>Log in</Button>
                                     </Link>
                                 </li>
                                 <li>
-                                    <Link to={"/login-company"}>
-                                        <Button className={"button-primary"}>Company</Button>
+                                    <Link to={"/signup"}>
+                                        <Button className={"button-primary"}>Sign up</Button>
                                     </Link>
                                 </li>
                             </ul>
@@ -52,7 +52,7 @@ function Navbar({ user, logout }) {
                             <Dropdown>
                                 <DropdownTrigger>
                                     <Avatar className={"cursor-pointer"}
-                                        alt={user?.name}
+                                            alt={user?.name}
                                         src={user?.avatar}
                                     />
                                 </DropdownTrigger>
