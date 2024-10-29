@@ -4,7 +4,7 @@ import {useState} from "react";
 import {Link} from "react-router-dom";
 import {Checkbox} from "@nextui-org/checkbox";
 
-function LoginForm({loginCompany}) {
+function LoginForm({login}) {
     const [isVisible, setIsVisible] = useState(false);
 
     const toggleVisibility = () => setIsVisible(!isVisible);
@@ -55,8 +55,8 @@ function LoginForm({loginCompany}) {
                     </Link>
                 </div>
                 <Button
-                    className="bg-secondary w-full"
-                    onClick={loginCompany}
+                    className="button-tertiary"
+                    onClick={login}
                 >
                     Login
                 </Button>

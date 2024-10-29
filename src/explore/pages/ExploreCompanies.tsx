@@ -106,11 +106,9 @@ function ExploreCompanies() {
 
             <div className="w-3/4">
                 {/* Search Bar */}
-                <div className="w-full mb-4">
+                <div className="flex w-full mb-4">
                     <Input
                         label="Search companies"
-                        variant="bordered"
-                        className="bg-white"
                         value={search}
                         onChange={handleSearchChange}
                         onKeyDown={handleSearchEnter}

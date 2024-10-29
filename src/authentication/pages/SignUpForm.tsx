@@ -70,7 +70,7 @@ function SignUpForm() {
                     </Checkbox>
                 </div>
                 <Button
-                    className="bg-secondary w-full font-medium"
+                    className="button-tertiary"
                 >
                     Sign up
                 </Button>
