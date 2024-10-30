@@ -1,10 +1,19 @@
+@import "primeicons/primeicons.css";
+
 :root {
   font-family: Poppins, sans-serif;
-
-  background-color: #F7F7F7;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+html, body {
+  background-color: #EFF5FB;
+  min-height: 100vh;
+}
+
+body {
+  padding: 8px;
 }
