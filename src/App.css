@@ -19,3 +19,7 @@
     @apply font-medium;
     @apply hover:text-primary duration-200;
 }
+
+.page-title {
+    @apply py-2 font-semibold text-lg md:text-xl;
+}

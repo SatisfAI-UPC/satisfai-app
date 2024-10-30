@@ -37,7 +37,7 @@ function SignUpForm() {
             dispatch(setToken(token));
             toast(`Welcome to SatisfAI!`, { type: "success" });
         } catch (error) {
-            toast(`We couldn't create an account: ${error.message}`, { type: "error" });
+            toast(`We couldn't create an account ${error.message}`, { type: "error" });
         }
     }
 

@@ -1,7 +1,9 @@
 
-function CompanyProfile() {
+function CompanyProfile(user) {
     return (
-        <div>Company Profile Page</div>
+        <div>
+            <h1 className="page-title">Company Profile</h1>
+        </div>
     );
 }
 

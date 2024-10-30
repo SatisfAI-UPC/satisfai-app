@@ -1,10 +1,10 @@
-import globalApiUri from "../../shared/services/GlobalAPI.ts";
+import {globalApiUrl} from "../../shared/services/GlobalAPI.ts";
 import axios from "axios";
 import {Company} from "../model/PublicCompany.ts";
 import {Review} from "../model/PublicReview.ts";
 
 export function fetchPublicCompanies() {
-    return axios.get<Company[]>(`${globalApiUri}/public/companies`)
+    return axios.get<Company[]>(`${globalApiUrl}/public/companies`)
         .then((response) => response.data)
         .catch((error) => {
             throw new Error(error.response.data.message);
@@ -12,7 +12,7 @@ export function fetchPublicCompanies() {
 }
 
 export function fetchPublicCompanyById(id: string | number) {
-    return axios.get<Company>(`${globalApiUri}/public/companies/${id}`)
+    return axios.get<Company>(`${globalApiUrl}/public/companies/${id}`)
         .then((response) => response.data)
         .catch((error) => {
             throw new Error(error.response.data.message);
@@ -20,7 +20,7 @@ export function fetchPublicCompanyById(id: string | number) {
 }
 
 export function fetchPublicCompanyReviewsById(id: string | number) {
-    return axios.get<Review[]>(`${globalApiUri}/public/companies/${id}/reviews`)
+    return axios.get<Review[]>(`${globalApiUrl}/public/companies/${id}/reviews`)
         .then((response) => response.data)
         .catch((error) => {
             throw new Error(error.response.data.message);
@@ -28,7 +28,7 @@ export function fetchPublicCompanyReviewsById(id: string | number) {
 }
 
 export function fetchPublicCompaniesBySearch(search: string) {
-    return axios.get<Company[]>(`${globalApiUri}/public/companies/search?name=${search}`)
+    return axios.get<Company[]>(`${globalApiUrl}/public/companies/search?name=${search}`)
         .then((response) => response.data)
         .catch((error) => {
             throw new Error(error.response.data.message);
