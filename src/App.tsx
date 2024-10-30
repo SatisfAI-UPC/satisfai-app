@@ -14,20 +14,18 @@ import CustomerSurveys from "./customer/pages/CustomerSurveys.tsx";
 import { ProtectedRoute } from "./shared/components/ProtectedRoute.tsx";
 import Layout from "./shared/components/Layout.tsx";
 import ExploreCompanyDetails from "./explore/pages/ExploreCompanyDetails.tsx";
+import {clearToken} from "./authentication/services/AuthSlice.ts";
+import {useDispatch, useSelector} from "react-redux";
 
 function App() {
-    const [user, setUser] = useState(null);
 
-    const login = () => {
-        setUser({
-            name: "John Company",
-            email: "company@gmail.com",
-            role: "COMPANY"
-        });
-    };
+    const user = useSelector((state) => state.auth.user);
+    const token = useSelector((state) => state.auth.token);
+
+    const dispatch = useDispatch();
 
     const logout = () => {
-        setUser(null);
+        dispatch(clearToken());
     };
 
     return (
@@ -35,8 +33,8 @@ function App() {
             <Routes>
                 <Route element={<Layout user={user} logout={logout} />}>
                     {/* Auth Routes */}
-                    <Route element={<ProtectedRoute isAllowed={user == null} redirectPath="/" />}>
-                        <Route path="/login" element={<LoginForm login={login} />} />
+                    <Route element={<ProtectedRoute isAllowed={user == null} redirectTo="/" />}>
+                        <Route path="/login" element={<LoginForm />} />
                         <Route path="/signup" element={<SignUpForm />} />
                     </Route>
 

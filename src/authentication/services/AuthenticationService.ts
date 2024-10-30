@@ -1,18 +1,19 @@
 import globalApiUri from "../../shared/services/GlobalAPI.ts";
 import axios from "axios";
 import {SigninRequest} from "../model/SigninRequest.ts";
+import {SignupRequest} from "../model/SignupRequest.ts";
 
-export function login(SigninRequest: SigninRequest) {
-    return axios.post<SigninRequest>(`${globalApiUri}/auth/signin`)
-        .then((response) => response.data)
+export function login(signinRequest: SigninRequest) {
+    return axios.post(`${globalApiUri}/auth/signin`, signinRequest)
+        .then((response) => response.data.token)
         .catch((error) => {
             throw new Error(error.response.data.message);
         });
 }
 
-export function signup() {
-    return axios.post<SigninRequest>(`${globalApiUri}/auth/signup`)
-        .then((response) => response.data)
+export function signup(signUpRequest: SignupRequest) {
+    return axios.post(`${globalApiUri}/auth/signup`, signUpRequest)
+        .then((response) => response.data.token)
         .catch((error) => {
             throw new Error(error.response.data.message);
         });
