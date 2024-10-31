@@ -2,25 +2,20 @@ import {useParams} from "react-router-dom";
 import {useMutation, useQuery} from "@tanstack/react-query";
 import {fetchSurveyById, updateSurveyById} from "../services/SurveyService.ts";
 import {Button, Card, Input, Textarea} from "@nextui-org/react";
-import SurveyQuestionCard from "../components/SurveyQuestionCard.tsx";
-import {Dropdown, DropdownItem, DropdownMenu, DropdownTrigger} from "@nextui-org/dropdown";
 import {CreateSurveyQuestion} from "../model/CreateSurveyQuestion.ts";
 import {toast, ToastContainer} from "react-toastify";
 import {useEffect, useState} from "react";
-import {generateOpenAISurveyQuestions} from "../services/OpenAIService.ts";
-import {useSelector} from "react-redux";
+import SurveyResponses from "../components/SurveyResponses.tsx";
+import SurveySettings from "../components/SurveySettings.tsx";
+import EditSurvey from "../components/EditSurvey.tsx";
 
 
 function CompanySurveysDashboard() {
     const { id } = useParams();
 
+    const [currentPage, setCurrentPage] = useState("edit");
+
     const [editableSurvey, setEditableSurvey] = useState(null);
-
-    const [generateQuestionPrompt, setGenerateQuestionPrompt] = useState("");
-
-    const user = useSelector((state) => state.auth.user);
-
-    const [loadingAIQuestion, setloadingAIQuestion] = useState(false);
 
     const {
         status,
@@ -70,72 +65,6 @@ function CompanySurveysDashboard() {
         saveSurveyMutation.mutate(updateRequest);
     };
 
-    {/* Question updates */}
-    const updateQuestion = (updatedQuestion) => {
-        setEditableSurvey((prevSurvey) => ({
-            ...prevSurvey,
-            questions: prevSurvey.questions.map((question) =>
-                question.id === updatedQuestion.id ? updatedQuestion : question
-            ),
-        }));
-    };
-
-    const deleteQuestion = (question) => {
-        setEditableSurvey((prevSurvey) => ({
-            ...prevSurvey,
-            questions: prevSurvey.questions.filter((item) => item.id !== question.id),
-        }));
-    };
-
-    {/* Add new question handle */}
-    const addNewQuestion = (questionType: string) => {
-        if (!["MULTIPLE_CHOICE", "RATING", "TEXT"].includes(questionType)) {
-            toast("Invalid question type", { type: "error" });
-            return;
-        }
-
-        const newQuestion: CreateSurveyQuestion = {
-            text: "",
-            type: questionType,
-            options: questionType === "MULTIPLE_CHOICE" ? [""] : [],
-            isMandatory: false,
-        };
-
-        setEditableSurvey((prevSurvey) => ({
-            ...prevSurvey,
-            questions: [...prevSurvey.questions, newQuestion],
-        }));
-    };
-
-    {/* Handle Open AI recommendation */}
-    const handleOpenAIRecommendation = async () => {
-        setloadingAIQuestion(true);
-        if (!generateQuestionPrompt || generateQuestionPrompt.length < 10) {
-            toast("Please enter at least ten characters", { type: "error" });
-            setloadingAIQuestion(false);
-            return;
-        }
-
-        try {
-            const generatedSurvey = await generateOpenAISurveyQuestions(generateQuestionPrompt, user?.id);
-            const generatedQuestions = generatedSurvey.questions.map((question:CreateSurveyQuestion) => ({
-                text: question.text,
-                type: question.type,
-                options: question.options,
-                isMandatory: question.isMandatory,
-            }));
-            console.log(generatedQuestions);
-            setEditableSurvey((prevSurvey) => ({
-                ...prevSurvey,
-                questions: [...prevSurvey.questions, ...generatedQuestions],
-            }));
-        } catch (error) {
-            toast(`There was an error generating questions ${error.message}`, { type: "error" });
-        } finally {
-            setloadingAIQuestion(false);
-        }
-    };
-
 
     return (
         <>
@@ -179,73 +108,34 @@ function CompanySurveysDashboard() {
                         </div>
                     </Card>
                     <Card className={"p-4"}>
-                        <div className={"flex flex-col items-center gap-4"}>
-                            {editableSurvey?.questions?.map((question, index) => (
-                                <div className={"w-full md:w-1/2"} key={question.id || index}>
-                                    <SurveyQuestionCard
-                                        key={question.id}
-                                        surveyQuestion={question}
-                                        onUpdate={updateQuestion}
-                                        onDelete={deleteQuestion}
-                                    />
-                                </div>
-                            ))}
-
-                            <div className={"flex flex-col items-center gap-2 w-full"}>
-                                <Dropdown>
-                                    <DropdownTrigger>
-                                        <Button className="w-full md:w-1/2 button-secondary">
-                                            Add Question
-                                        </Button>
-                                    </DropdownTrigger>
-                                    <DropdownMenu aria-label="Static Actions">
-                                        <DropdownItem key="MULTIPLE_CHOICE"
-                                                      onPress={() => addNewQuestion("MULTIPLE_CHOICE")}>
-                                            <i className={"pi pi-circle-off"}/> Multiple choice question
-                                        </DropdownItem>
-                                        <DropdownItem key="RATING"
-                                                      onPress={() => addNewQuestion("RATING")}>
-                                            <i className={"pi pi-star"}/> Rating
-                                        </DropdownItem>
-                                        <DropdownItem key="TEXT"
-                                                      onPress={() => addNewQuestion("TEXT")}>
-                                            <i className={"pi pi-align-justify"}/> Textbox
-                                        </DropdownItem>
-                                    </DropdownMenu>
-                                </Dropdown>
-
-                                <div className={"flex w-full gap-1 md:w-1/2 items-center"}>
-                                    <Textarea
-                                        disableAnimation
-                                        disableAutosize
-                                        classNames={{
-                                            input: "resize-y min-h-[12px]",
-                                        }}
-                                        color={"warning"}
-                                        disabled={loadingAIQuestion} // Disable when loading
-                                        label="Generate questions with AI ✨"
-                                        value={generateQuestionPrompt}
-                                        onChange={(e) => setGenerateQuestionPrompt(e.target.value)}
-                                    />
-                                    <Button
-                                        isIconOnly
-                                        color={"secondary"}
-                                        disabled={loadingAIQuestion}
-                                        onClick={handleOpenAIRecommendation}
-                                    >
-                                        {loadingAIQuestion ? (
-                                            <i className="pi pi-spinner animate-spin" />
-                                        ) : (
-                                            <i className="pi pi-arrow-up"/>
-                                        )}
-                                    </Button>
-                                </div>
-
-                                <Button onClick={saveChanges} className="w-full md:w-1/2 button-primary">
-                                    Save Changes
-                                </Button>
-                            </div>
+                        <div className={"flex gap-8 text-center justify-center py-4"}>
+                            <h1 className={"link-primary"} onClick={() => setCurrentPage("edit")}>Edit</h1>
+                            <h1 className={"link-primary"} onClick={() => setCurrentPage("responses")}>Responses</h1>
+                            <h1 className={"link-primary"} onClick={() => setCurrentPage("settings")}>Settings</h1>
                         </div>
+                        {/* EDIT */}
+                        <div className={"flex flex-col items-center gap-4"}>
+                            {currentPage === "edit" && (
+                                <EditSurvey
+                                    editableSurvey={editableSurvey}
+                                    setEditableSurvey={setEditableSurvey}
+                                    saveChanges={saveChanges}
+                                    resetChanges={resetChanges}
+                                />
+                            )}
+                            {currentPage === "responses" &&
+                                <SurveyResponses surveyId={id}/>
+                            }
+                            {currentPage === "settings" &&
+                                <SurveySettings survey={editableSurvey}/>
+                            }
+                            <Button onClick={saveChanges} className="w-full md:w-1/2 button-primary">
+                                Save Changes
+                            </Button>
+                        </div>
+                        {/* RESPONSES */}
+
+                        {/* SETTINGS */}
                     </Card>
                 </div>
             )}

@@ -24,6 +24,14 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
         onUpdate(updatedQuestion);
     };
 
+    const addOption = () => {
+        const updatedOptions = [...editableQuestion.options];
+        updatedOptions.push("");
+        const updatedQuestion = { ...editableQuestion, options: updatedOptions };
+        setEditableQuestion(updatedQuestion);
+        onUpdate(updatedQuestion);
+    }
+
     const renderInputField = () => {
         switch (editableQuestion.type) {
             case "TEXT":
@@ -79,6 +87,9 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
                 </Button>
             </div>
             <div className="text-grey mt-2">{renderInputField()}</div>
+            <Button isIconOnly onClick={ addOption } className={"mt-2"}>
+                <i className="pi pi-plus" />
+            </Button>
             <div className="mt-4">
                 <label className="flex items-center gap-2">
                     <span>Mandatory:</span>

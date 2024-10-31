@@ -17,6 +17,7 @@
 
 .link-primary {
     @apply font-medium;
+    @apply hover:cursor-pointer;
     @apply hover:text-primary duration-200;
 }
 
