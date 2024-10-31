@@ -1,16 +1,16 @@
 import {Company} from "../model/PublicCompany.ts";
-import {Button, Card, Image} from "@nextui-org/react";
+import {Avatar, Button, Card, Image} from "@nextui-org/react";
 import {Link} from "react-router-dom";
 
 const PublicCompanyCard = ({ company }: { company: Company }, isDetails: boolean) => {
     return (
             <Card className="p-4 md:p-6 hover:cursor-pointer">
                 <Link to={`/company/${company.id}`}>
-                    <div className={"flex justify-between items-center"}>
+                    <div className={"flex justify-between items-center mb-4"}>
                         <div className={"flex items-center gap-2 md:gap-4"}>
-                            <Image src={company.profilePictureUrl}
-                                   alt={company.name + " logo"}
-                                   className={"w-12 md:w-24 h-auto rounded-full"}
+                            <Avatar className={"w-12 h-12 md:w-20 md:h-20 text-large"}
+                                    alt={company?.name}
+                                    src={company?.profilePictureUrl}
                             />
                             <div className={"flex flex-col"}>
                                 <h1 className={"font-bold text-lg md:text-xl"}>{company.name}</h1>

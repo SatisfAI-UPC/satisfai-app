@@ -1,12 +1,12 @@
 import './App.css';
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import NotFound from "./shared/pages/NotFound.tsx";
 import ExploreCompanies from "./explore/pages/ExploreCompanies.tsx";
 import CompanyProfile from "./company/pages/CompanyProfile.tsx";
 import LoginForm from "./authentication/pages/LoginForm.tsx";
 import SignUpForm from "./authentication/pages/SignUpForm.tsx";
 import { useState } from "react";
-import CompanySurveys from "./company/pages/CompanySurveys.tsx";
+import CompanySurveys from "./survey/pages/CompanySurveys.tsx";
 import CompanyBilling from "./company/pages/CompanyBilling.tsx";
 import CustomerProfile from "./customer/pages/CustomerProfile.tsx";
 import CustomerReviews from "./customer/pages/CustomerReviews.tsx";
@@ -16,11 +16,11 @@ import Layout from "./shared/components/Layout.tsx";
 import ExploreCompanyDetails from "./explore/pages/ExploreCompanyDetails.tsx";
 import {clearToken} from "./authentication/services/AuthSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
+import CompanySurveysDashboard from "./survey/pages/CompanySurveysDashboard.tsx";
 
 function App() {
 
     const user = useSelector((state) => state.auth.user);
-    const token = useSelector((state) => state.auth.token);
 
     const dispatch = useDispatch();
 
@@ -32,6 +32,21 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route element={<Layout user={user} logout={logout} />}>
+                    <Route
+                        path=""
+                        element={
+                            user ? (
+                                user.role === "CUSTOMER" ? (
+                                    <Navigate to="/explore-companies" />
+                                ) : (
+                                    <Navigate to="/company-surveys" />
+                                )
+                            ) : (
+                                <Navigate to="/explore-companies" />
+                            )
+                        }
+                    />
+
                     {/* Auth Routes */}
                     <Route element={<ProtectedRoute isAllowed={user == null} redirectTo="/" />}>
                         <Route path="/login" element={<LoginForm />} />
@@ -39,16 +54,17 @@ function App() {
                     </Route>
 
                     {/* Customer Routes */}
-                    <Route element={<ProtectedRoute isAllowed={!!user && user?.role === "CUSTOMER"} redirectPath="/login-customer" />}>
+                    <Route element={<ProtectedRoute isAllowed={!!user && user?.role === "CUSTOMER"} redirectTo="/login" />}>
                         <Route path="/customer-profile" element={<CustomerProfile />} />
                         <Route path="/customer-reviews" element={<CustomerReviews />} />
                         <Route path="/customer-surveys" element={<CustomerSurveys />} />
                     </Route>
 
                     {/* Company Routes */}
-                    <Route element={<ProtectedRoute isAllowed={!!user && user?.role === "COMPANY"} redirectPath="/login-company" />}>
+                    <Route element={<ProtectedRoute isAllowed={!!user && user?.role === "COMPANY"} redirectTo="/login" />}>
                         <Route path="/company-profile" element={<CompanyProfile />} />
                         <Route path="/company-surveys" element={<CompanySurveys />} />
+                        <Route path="/company-surveys/:id/edit" element={<CompanySurveysDashboard />} />
                         <Route path="/company-billing" element={<CompanyBilling />} />
                     </Route>
 

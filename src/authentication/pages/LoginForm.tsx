@@ -35,7 +35,6 @@ function LoginForm() {
                     <img
                         src={"src/assets/satisfai-icon.png"} alt={"SatisfAI"}
                         className={"w-12 md:w-16 mx-auto"} />
-                    <p className={"font-bold text-primary"}>Company</p>
                 </Link>
                 <h1 className={"font-bold text-xl md:text-5xl text-center"}>
                     Login

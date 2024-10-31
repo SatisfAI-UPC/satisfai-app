@@ -3,7 +3,17 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchPublicCompanies, fetchPublicCompaniesBySearch } from "../services/CompanyExploreService.ts";
 import { Company } from "../model/PublicCompany.ts";
 import PublicCompanyCard from "../components/PublicCompanyCard.tsx";
-import {Card, Divider, Input, Pagination} from "@nextui-org/react";
+import {
+    Divider,
+    Input,
+    Pagination,
+    Modal,
+    Button,
+    ModalHeader,
+    ModalBody,
+    useDisclosure,
+    ModalContent
+} from "@nextui-org/react";
 
 function ExploreCompanies() {
     const [search, setSearch] = useState("");
@@ -13,11 +23,9 @@ function ExploreCompanies() {
     const [page, setPage] = useState(1);
     const limit = 10;
 
-    const {
-        status,
-        error,
-        data: companies,
-    } = useQuery({
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
+    const { status, error, data: companies } = useQuery({
         queryKey: ["companies", searchQuery, selectedIndustry, selectedLocation, page],
         queryFn: () =>
             searchQuery
@@ -69,10 +77,59 @@ function ExploreCompanies() {
     });
 
     return (
-        <div className="flex p-4 space-x-4">
-            <aside className="w-1/4 p-4 bg-white rounded-xl h-min">
+        <div className="flex p-4 gap-4">
+            {/* Filter modal for small screens */}
+            <Modal
+                closeButton
+                isOpen={isOpen}
+                onOpenChange={onOpenChange}
+            >
+                <ModalContent>
+                    {() => (
+                        <>
+                            <ModalHeader>
+                                <h2 className="font-semibold text-lg text-secondary">Filters</h2>
+                            </ModalHeader>
+                            <ModalBody>
+                                <div className="py-4">
+                                    <h3 className="font-bold">Industry</h3>
+                                    {industries.map((industry) => (
+                                        <div key={industry} className="flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedIndustry === industry}
+                                                onChange={() => handleIndustryChange(industry)}
+                                                className="mr-2"
+                                            />
+                                            <label>{industry}</label>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div>
+                                    <h3 className="font-bold">Location</h3>
+                                    {locations.map((location) => (
+                                        <div key={location} className="flex items-center">
+                                            <input
+                                                type="checkbox"
+                                                checked={selectedLocation === location}
+                                                onChange={() => handleLocationChange(location)}
+                                                className="mr-2"
+                                            />
+                                            <label>{location}</label>
+                                        </div>
+                                    ))}
+                                </div>
+                            </ModalBody>
+                        </>
+                    )
+                    }
+                </ModalContent>
+            </Modal>
+
+            {/* Sidebar filter for larger screens */}
+            <aside className="hidden md:block w-1/4 p-4 bg-white rounded-xl h-min">
                 <h2 className="font-semibold text-lg mb-4 text-secondary">Filters</h2>
-                <Divider/>
+                <Divider />
                 <div className="py-4">
                     <h3 className="font-bold">Industry</h3>
                     {industries.map((industry) => (
@@ -87,7 +144,6 @@ function ExploreCompanies() {
                         </div>
                     ))}
                 </div>
-
                 <div>
                     <h3 className="font-bold">Location</h3>
                     {locations.map((location) => (
@@ -104,9 +160,16 @@ function ExploreCompanies() {
                 </div>
             </aside>
 
-            <div className="w-3/4">
+            <div className="w-full md:w-3/4">
                 {/* Search Bar */}
-                <div className="flex w-full mb-4">
+                <div className="flex w-full mb-4 items-center gap-2">
+                    <Button
+                        isIconOnly
+                        className="md:hidden bg-tertiary text-white"
+                        onPress={onOpen}
+                    >
+                        <i className="pi pi-filter"/>
+                    </Button>
                     <Input
                         label="Search companies"
                         value={search}
@@ -114,12 +177,11 @@ function ExploreCompanies() {
                         onKeyDown={handleSearchEnter}
                     />
                 </div>
-
-                <h1 className="mt-2 font-medium text-xl">Explore Companies</h1>
-                <div className="grid gap-4 mt-4">
+                <h1 className="page-title">Explore Companies</h1>
+                <div className="grid md:grid-cols-2 gap-4 mt-4">
                     {filteredCompanies && filteredCompanies.length > 0 ? (
                         filteredCompanies.map((company: Company) => (
-                            <PublicCompanyCard key={company.id} company={company} />
+                            <PublicCompanyCard key={company.id} company={company}/>
                         ))
                     ) : (
                         <p className="text-lg">No companies found for the selected filters.</p>
