@@ -2,6 +2,7 @@ import axios from "axios";
 import {surveyApiUrl} from "../../shared/services/GlobalAPI.ts";
 import {CreateSurveyRequest} from "../model/CreateSurveyRequest.ts";
 import {SurveyDetails} from "../model/SurveyDetails.ts";
+import {CreateSurveyQuestion} from "../model/CreateSurveyQuestion.ts";
 
 export function fetchAllSurveys(){
     return axios.get(`${surveyApiUrl}/all`)
@@ -21,6 +22,14 @@ export function createNewSurvey(createSurveyRequest: CreateSurveyRequest){
 
 export function fetchSurveyById(id: number | string): Promise<SurveyDetails> {
     return axios.get(`${surveyApiUrl}/${id}`)
+        .then((response) => response.data)
+        .catch((error) => {
+            throw new Error(error.response.data.message);
+        });
+}
+
+export function createNewSurveyQuestion(surveyId: string | number, question: CreateSurveyQuestion) {
+    return axios.post(`${surveyApiUrl}/${surveyId}/create-question`, question)
         .then((response) => response.data)
         .catch((error) => {
             throw new Error(error.response.data.message);
