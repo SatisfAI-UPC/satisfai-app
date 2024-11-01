@@ -10,4 +10,5 @@ export interface SurveyDetails {
     status: string,
     createdAt: Date,
     organizationId: number,
+    privacyStatus: string,
 }

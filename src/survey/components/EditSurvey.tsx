@@ -32,10 +32,10 @@ function EditSurvey({ editableSurvey, setEditableSurvey }) {
         }));
     };
 
-    const deleteQuestion = (question) => {
+    const deleteQuestion = (index) => {
         setEditableSurvey((prevSurvey) => ({
             ...prevSurvey,
-            questions: prevSurvey.questions.filter((item) => item.id !== question.id),
+            questions: prevSurvey.questions.filter((_, i) => i !== index),
         }));
     };
 
@@ -70,14 +70,16 @@ function EditSurvey({ editableSurvey, setEditableSurvey }) {
 
     return (
         <div className="w-full md:w-1/2">
-            {editableSurvey?.questions.map((question, index) => (
-                <SurveyQuestionCard
-                    key={question.id || index}
-                    surveyQuestion={question}
-                    onUpdate={updateQuestion}
-                    onDelete={deleteQuestion}
-                />
-            ))}
+            <div className={"grid gap-2"}>
+                {editableSurvey?.questions.map((question, index) => (
+                    <SurveyQuestionCard
+                        key={index}
+                        surveyQuestion={question}
+                        onUpdate={updateQuestion}
+                        onDelete={() => deleteQuestion(index)}
+                    />
+                ))}
+            </div>
             <div className={"flex flex-col items-center gap-2 w-full"}>
                 <Dropdown>
                     <DropdownTrigger>
@@ -109,7 +111,7 @@ function EditSurvey({ editableSurvey, setEditableSurvey }) {
                             input: "resize-y min-h-[12px]",
                         }}
                         color={"warning"}
-                        disabled={loadingAIQuestion} // Disable when loading
+                        disabled={loadingAIQuestion}
                         label="Generate questions with AI ✨"
                         value={generateQuestionPrompt}
                         onChange={(e) => setGenerateQuestionPrompt(e.target.value)}
