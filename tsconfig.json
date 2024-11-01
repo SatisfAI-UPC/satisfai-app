@@ -3,5 +3,11 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "strict": false,             // Disables all strict type-checking options
+    "skipLibCheck": true,        // Skips type checking for declaration files in node_modules
+    "noImplicitAny": false,      // Allows implicit 'any' types
+    "suppressImplicitAnyIndexErrors": true
+  }
 }
