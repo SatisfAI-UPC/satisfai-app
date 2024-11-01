@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Button, Pagination} from "@nextui-org/react";
 import {useQuery} from "@tanstack/react-query";
-import {createNewSurvey, fetchSurveysByCompanyId} from "../services/SurveyService.ts";
+import {createNewSurvey, deleteSurveyById, fetchSurveysByCompanyId} from "../services/SurveyService.ts";
 import {toast, ToastContainer} from "react-toastify";
 import {CreateSurveyQuestion} from "../model/CreateSurveyQuestion.ts";
 import CompanySurveyCard from "../components/CompanySurveyCard.tsx";
@@ -86,7 +86,8 @@ function CompanySurveys() {
                     <div className="grid md:grid-cols-2 gap-4 mt-4">
                         {surveys && surveys.length > 0 ? (
                             surveys.map((survey: Survey) => (
-                                <CompanySurveyCard key={survey.id} survey={survey}/>
+                                <CompanySurveyCard
+                                    key={survey.id} survey={survey}/>
                             ))
                         ) : (
                             <p className="text-lg">No surveys found</p>

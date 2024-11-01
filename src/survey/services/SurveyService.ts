@@ -86,16 +86,16 @@ export function closeSurveyById(id: string | number){
         });
 }
 
-export function updateSurveyPrivacyById(id: string | number){
+export function updateSurveyPrivacyById(id: string | number) {
     return axios.patch(`${surveyApiUrl}/${id}/privacy`)
         .then((response) => response.data)
         .catch((error) => {
-            throw new Error(error.response.data.message);
+            throw new Error(error.response?.data?.message || "Error updating survey privacy");
         });
 }
 
 
-export function fetchSurveysByStatus(status: string){
+export function fetchSurveysByStatus(status: string) {
     return axios.get(`${surveyApiUrl}/status/${status}`)
         .then((response) => response.data)
         .catch((error) => {
@@ -104,7 +104,7 @@ export function fetchSurveysByStatus(status: string){
 }
 
 
-export function fetchPublicSurveys(){
+export function fetchPublicSurveys() {
     return axios.get(`${surveyApiUrl}/public`)
         .then((response) => response.data)
         .catch((error) => {
@@ -112,7 +112,7 @@ export function fetchPublicSurveys(){
         });
 }
 
-export function fetchSurveyUrlById(id: string | number){
+export function fetchSurveyUrlById(id: string | number) {
     return axios.get(`${surveyApiUrl}/${id}/link`)
         .then((response) => response.data)
         .catch((error) => {
@@ -121,7 +121,7 @@ export function fetchSurveyUrlById(id: string | number){
 }
 
 
-export function fetchSurveyQrById(id: string | number){
+export function fetchSurveyQrById(id: string | number) {
     return axios.get(`${surveyApiUrl}/${id}/qr`)
         .then((response) => response.data)
         .catch((error) => {
@@ -130,7 +130,7 @@ export function fetchSurveyQrById(id: string | number){
 }
 
 
-export function fetchRecommendationById(id: string | number){
+export function fetchRecommendationById(id: string | number) {
     return axios.get(`${surveyApiUrl}/${id}/generate-recommendation`)
         .then((response) => response.data)
         .catch((error) => {

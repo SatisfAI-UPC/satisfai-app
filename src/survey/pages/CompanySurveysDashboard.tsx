@@ -1,8 +1,14 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {useMutation, useQuery} from "@tanstack/react-query";
-import {fetchSurveyById, updateSurveyById} from "../services/SurveyService.ts";
+import {
+    closeSurveyById,
+    deleteSurveyById,
+    fetchSurveyById,
+    publishSurveyById,
+    updateSurveyById,
+    updateSurveyPrivacyById
+} from "../services/SurveyService.ts";
 import {Button, Card, Input, Textarea} from "@nextui-org/react";
-import {CreateSurveyQuestion} from "../model/CreateSurveyQuestion.ts";
 import {toast, ToastContainer} from "react-toastify";
 import {useEffect, useState} from "react";
 import SurveyResponses from "../components/SurveyResponses.tsx";
@@ -19,13 +25,14 @@ function CompanySurveysDashboard() {
 
     const {
         status,
-        error,
         data: survey,
     } = useQuery({
         queryKey: ["survey", id],
         queryFn: () => fetchSurveyById(id),
         enabled: !!id,
     });
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (survey) setEditableSurvey(survey);
@@ -65,6 +72,40 @@ function CompanySurveysDashboard() {
         saveSurveyMutation.mutate(updateRequest);
     };
 
+    const publishSurvey = () => {
+        publishSurveyById(survey?.id).then(() => {
+            toast("Survey published successfully", {type: "success"})
+        }).catch(e => {
+            toast(`Error publishing survey ${e.message}`, {type: "error"});
+        });
+    }
+
+    const closeSurvey = () => {
+        closeSurveyById(survey?.id).then(() => {
+            toast("Survey closed successfully", {type: "success"});
+        }).catch(e => {
+            toast(`Error closing survey ${e.message}`, {type: "error"});
+        });
+    }
+
+    const deleteSurvey = async () => {
+        try {
+            await deleteSurveyById(survey.id);
+            toast("Survey deleted successfully", { type: "success" });
+            navigate("/company-surveys");
+        } catch (error) {
+            toast(`There was an error deleting the survey ${error.message}`, { type: "error" });
+        }
+    }
+
+    const switchPrivacy = async () => {
+        await updateSurveyPrivacyById(survey.id).then(() => {
+            setEditableSurvey((prev) => ({ ...prev, privacyStatus: !prev.privacyStatus }));
+            toast("Survey privacy updated successfully", { type: "success" });
+        }).catch((error) => {
+                toast(`Error updating survey privacy ${error.message}`, { type: "error" });
+        });
+    };
 
     return (
         <>
@@ -78,17 +119,41 @@ function CompanySurveysDashboard() {
                     <Card className="p-4">
                         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                             <div className={"flex flex-col w-full gap-2"}>
+                                <div className={"flex gap-2 items-center"}>
+                                    {editableSurvey?.status === "DRAFT" ? (
+                                        <Button className={"w-32"}
+                                                startContent={<i className={"pi pi-align-justify"}/>}>
+                                            Draft
+                                        </Button>
+                                    ) : editableSurvey?.status === "ACTIVE" ? (
+                                        <Button color={"primary"} className={"w-32"} startContent={<i className={"pi pi-check"}/>}>
+                                            Published
+                                        </Button>
+                                    ) : editableSurvey?.status === "CLOSED" ? (
+                                        <Button color={"warning"} className={"w-32"} startContent={<i className={"pi pi-times"}/>}>
+                                            Private
+                                        </Button>
+                                    ) : (
+                                        <Button color={"danger"} className={"w-32"} startContent={<i className={"pi pi-times"}/>}>
+                                            Error
+                                        </Button>
+                                    )}
+                                </div>
+
                                 <Input
                                     label="Survey Title"
                                     value={editableSurvey?.title || ""}
                                     onChange={handleSurveyTitleChange}
-                                    startContent={<i className="pi pi-pencil text-secondary text-sm" />}
+                                    startContent={<i className="pi pi-pencil text-secondary text-sm"/>}
                                     fullWidth
                                 />
                                 <Textarea
                                     label="Survey Description"
                                     value={editableSurvey?.description || ""}
-                                    onChange={(e) => setEditableSurvey((prev) => ({ ...prev, description: e.target.value }))}
+                                    onChange={(e) => setEditableSurvey((prev) => ({
+                                        ...prev,
+                                        description: e.target.value
+                                    }))}
                                 />
                             </div>
                             <div className="flex flex-col gap-1 md:gap-2 w-full md:w-auto">
@@ -100,6 +165,30 @@ function CompanySurveysDashboard() {
                                     <i className="pi pi-eye mr-2"/>
                                     Preview
                                 </Button>
+                                {editableSurvey?.status === "DRAFT" ? (
+                                    <Button onClick={publishSurvey}
+                                            className={"w-full button-tertiary"}
+                                            startContent={<i className={"pi pi-share-alt"}/>}>
+                                        Publish
+                                    </Button>
+                                ) : editableSurvey?.status === "ACTIVE" ? (
+                                    <Button onClick={closeSurvey}
+                                            color={"danger"} className={"w-full"}
+                                            startContent={<i className={"pi pi-times"}/>}>
+                                        Close survey
+                                    </Button>
+                                ) : editableSurvey?.status === "CLOSED" ? (
+                                    <Button onClick={publishSurvey}
+                                            color={"warning"}
+                                            className={"w-full"}
+                                            startContent={<i className={"pi pi-share"}/>}>
+                                        Reopen survey
+                                    </Button>
+                                ) : (
+                                    <Button color={"danger"} className={"w-full"} startContent={<i className={"pi pi-times"}/>}>
+                                        Error
+                                    </Button>
+                                )}
                                 <Button color="danger" className="w-full" onClick={resetChanges}>
                                     <i className="pi pi-refresh mr-2"/>
                                     Reset Changes
@@ -113,29 +202,28 @@ function CompanySurveysDashboard() {
                             <h1 className={"link-primary"} onClick={() => setCurrentPage("responses")}>Responses</h1>
                             <h1 className={"link-primary"} onClick={() => setCurrentPage("settings")}>Settings</h1>
                         </div>
-                        {/* EDIT */}
                         <div className={"flex flex-col items-center gap-4"}>
                             {currentPage === "edit" && (
                                 <EditSurvey
                                     editableSurvey={editableSurvey}
                                     setEditableSurvey={setEditableSurvey}
-                                    saveChanges={saveChanges}
-                                    resetChanges={resetChanges}
                                 />
                             )}
                             {currentPage === "responses" &&
-                                <SurveyResponses surveyId={id}/>
+                                <SurveyResponses
+                                    survey={editableSurvey}/>
                             }
                             {currentPage === "settings" &&
-                                <SurveySettings survey={editableSurvey}/>
+                                <SurveySettings
+                                    survey={editableSurvey}
+                                    deleteSurvey={deleteSurvey}
+                                    switchPrivacy={switchPrivacy}
+                                />
                             }
                             <Button onClick={saveChanges} className="w-full md:w-1/2 button-primary">
                                 Save Changes
                             </Button>
                         </div>
-                        {/* RESPONSES */}
-
-                        {/* SETTINGS */}
                     </Card>
                 </div>
             )}

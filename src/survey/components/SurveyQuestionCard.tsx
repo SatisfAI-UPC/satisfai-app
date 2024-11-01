@@ -46,7 +46,7 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
             case "MULTIPLE_CHOICE":
                 return (
                     <div className="flex flex-col gap-2 mt-2">
-                        {editableQuestion.options?.map((option, index) => (
+                        {editableQuestion.options?.map(({option}, index) => (
                             <Input
                                 key={index}
                                 value={option}
