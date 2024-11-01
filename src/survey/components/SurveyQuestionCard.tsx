@@ -82,7 +82,7 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
                     onChange={handleTextChange}
                     fullWidth
                 />
-                <Button isIconOnly color="danger" onClick={() => onDelete(editableQuestion)}>
+                <Button isIconOnly color="danger" onClick={onDelete}>
                     <i className="pi pi-trash" />
                 </Button>
             </div>
