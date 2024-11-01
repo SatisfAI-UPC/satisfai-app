@@ -1,7 +1,7 @@
 import {useState} from "react";
 import {Button, Pagination} from "@nextui-org/react";
 import {useQuery} from "@tanstack/react-query";
-import {createNewSurvey, deleteSurveyById, fetchSurveysByCompanyId} from "../services/SurveyService.ts";
+import {createNewSurvey, fetchSurveysByCompanyId} from "../services/SurveyService.ts";
 import {toast, ToastContainer} from "react-toastify";
 import {CreateSurveyQuestion} from "../model/CreateSurveyQuestion.ts";
 import CompanySurveyCard from "../components/CompanySurveyCard.tsx";

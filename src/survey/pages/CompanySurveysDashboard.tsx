@@ -8,12 +8,13 @@ import {
     updateSurveyById,
     updateSurveyPrivacyById
 } from "../services/SurveyService.ts";
-import {Button, Card, Input, Textarea} from "@nextui-org/react";
+import {Button, Card, Input, Modal, ModalContent, Textarea, useDisclosure} from "@nextui-org/react";
 import {toast, ToastContainer} from "react-toastify";
 import {useEffect, useState} from "react";
 import SurveyResponses from "../components/SurveyResponses.tsx";
 import SurveySettings from "../components/SurveySettings.tsx";
 import EditSurvey from "../components/EditSurvey.tsx";
+import {ShareSurveyLinkModal} from "../components/ShareSurveyLinkModal.tsx";
 
 
 function CompanySurveysDashboard() {
@@ -22,6 +23,8 @@ function CompanySurveysDashboard() {
     const [currentPage, setCurrentPage] = useState("edit");
 
     const [editableSurvey, setEditableSurvey] = useState(null);
+
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
 
     const {
         status,
@@ -43,12 +46,25 @@ function CompanySurveysDashboard() {
         setEditableSurvey((prev) => ({ ...prev, title: event.target.value }));
     };
 
+    const handleSurveyDescriptionChange = (event) => {
+        setEditableSurvey((prev) => ({ ...prev, description: event.target.value }));
+    };
+
     {/* Save changes */}
     const saveSurveyMutation = useMutation({
-        mutationFn: (updatedSurvey) => updateSurveyById(id, updatedSurvey),
-        onSuccess: () => toast("Survey saved successfully", { type: "success" }),
-        onError: (error) => toast(`Error saving survey: ${error.message}`, { type: "error" }),
+        mutationFn: (updatedSurvey) => {
+            if (survey?.id) {
+                return updateSurveyById(survey.id, updatedSurvey);
+            }
+        },
+        onSuccess: () => {
+            toast("Survey saved successfully", { type: "success" });
+        },
+        onError: (error) => {
+            toast(`Error saving survey: ${error.message}`, { type: "error" });
+        },
     });
+
 
     {/* Preview handle */}
     const showPreview = () => {
@@ -67,13 +83,14 @@ function CompanySurveysDashboard() {
             questions: editableSurvey.questions,
             status: editableSurvey.status,
             privacyStatus: editableSurvey.privacyStatus,
-            organization: editableSurvey.organization
+            organization: editableSurvey.organizationId,
         };
         saveSurveyMutation.mutate(updateRequest);
     };
 
     const publishSurvey = () => {
-        publishSurveyById(survey?.id).then(() => {
+        publishSurveyById(editableSurvey?.id).then(() => {
+            setEditableSurvey((prev) => ({ ...prev, status: "ACTIVE" }));
             toast("Survey published successfully", {type: "success"})
         }).catch(e => {
             toast(`Error publishing survey ${e.message}`, {type: "error"});
@@ -82,6 +99,7 @@ function CompanySurveysDashboard() {
 
     const closeSurvey = () => {
         closeSurveyById(survey?.id).then(() => {
+            setEditableSurvey((prev) => ({ ...prev, status: "CLOSED" }));
             toast("Survey closed successfully", {type: "success"});
         }).catch(e => {
             toast(`Error closing survey ${e.message}`, {type: "error"});
@@ -138,6 +156,29 @@ function CompanySurveysDashboard() {
                                             Error
                                         </Button>
                                     )}
+                                    <Button
+                                        isIconOnly
+                                        className={"button-tertiary w-full md:w-1/4"}
+                                        isDisabled={editableSurvey?.status !== "ACTIVE"}
+                                        endContent={<i className={"pi pi-share-alt"} />}
+                                        onPress={onOpen}
+                                    >
+                                        {
+                                            editableSurvey?.privacyStatus === "ACTIVE" ? (
+                                                <p>Publish the survey to get the link</p>
+                                            ) : (
+                                                <p>Share survey</p>
+                                            )
+                                        }
+                                    </Button>
+                                    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                                        <ModalContent>
+                                            {
+                                                (onClose) =>
+                                                    <ShareSurveyLinkModal surveyId={editableSurvey.id} onClose={onClose} />
+                                            }
+                                        </ModalContent>
+                                    </Modal>
                                 </div>
 
                                 <Input
@@ -150,10 +191,7 @@ function CompanySurveysDashboard() {
                                 <Textarea
                                     label="Survey Description"
                                     value={editableSurvey?.description || ""}
-                                    onChange={(e) => setEditableSurvey((prev) => ({
-                                        ...prev,
-                                        description: e.target.value
-                                    }))}
+                                    onChange={handleSurveyDescriptionChange}
                                 />
                             </div>
                             <div className="flex flex-col gap-1 md:gap-2 w-full md:w-auto">
