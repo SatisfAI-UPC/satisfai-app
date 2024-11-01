@@ -83,6 +83,7 @@ function ExploreCompanies() {
                 closeButton
                 isOpen={isOpen}
                 onOpenChange={onOpenChange}
+                scrollBehavior={"outside"}
             >
                 <ModalContent>
                     {() => (

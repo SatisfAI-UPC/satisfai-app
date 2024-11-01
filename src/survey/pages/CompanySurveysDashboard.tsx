@@ -15,21 +15,16 @@ import SurveyResponses from "../components/SurveyResponses.tsx";
 import SurveySettings from "../components/SurveySettings.tsx";
 import EditSurvey from "../components/EditSurvey.tsx";
 import {ShareSurveyLinkModal} from "../components/ShareSurveyLinkModal.tsx";
-
+import {SurveyPreviewModal} from "../components/SurveyPreviewModal.tsx";
 
 function CompanySurveysDashboard() {
     const { id } = useParams();
-
     const [currentPage, setCurrentPage] = useState("edit");
-
     const [editableSurvey, setEditableSurvey] = useState(null);
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
+    const { isOpen: isOpenPreview, onOpen: onOpenPreview, onOpenChange: onOpenChangePreview } = useDisclosure();
 
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
-
-    const {
-        status,
-        data: survey,
-    } = useQuery({
+    const { status, data: survey } = useQuery({
         queryKey: ["survey", id],
         queryFn: () => fetchSurveyById(id),
         enabled: !!id,
@@ -41,7 +36,6 @@ function CompanySurveysDashboard() {
         if (survey) setEditableSurvey(survey);
     }, [survey]);
 
-    {/* Title handle */}
     const handleSurveyTitleChange = (event) => {
         setEditableSurvey((prev) => ({ ...prev, title: event.target.value }));
     };
@@ -50,7 +44,6 @@ function CompanySurveysDashboard() {
         setEditableSurvey((prev) => ({ ...prev, description: event.target.value }));
     };
 
-    {/* Save changes */}
     const saveSurveyMutation = useMutation({
         mutationFn: (updatedSurvey) => {
             if (survey?.id) {
@@ -65,13 +58,6 @@ function CompanySurveysDashboard() {
         },
     });
 
-
-    {/* Preview handle */}
-    const showPreview = () => {
-        console.log("Preview");
-    }
-
-    {/* Reset changes handle */}
     const resetChanges = () => {
         setEditableSurvey(survey);
     };
@@ -121,7 +107,7 @@ function CompanySurveysDashboard() {
             setEditableSurvey((prev) => ({ ...prev, privacyStatus: !prev.privacyStatus }));
             toast("Survey privacy updated successfully", { type: "success" });
         }).catch((error) => {
-                toast(`Error updating survey privacy ${error.message}`, { type: "error" });
+            toast(`Error updating survey privacy ${error.message}`, { type: "error" });
         });
     };
 
@@ -139,8 +125,7 @@ function CompanySurveysDashboard() {
                             <div className={"flex flex-col w-full gap-2"}>
                                 <div className={"flex gap-2 items-center"}>
                                     {editableSurvey?.status === "DRAFT" ? (
-                                        <Button className={"w-32"}
-                                                startContent={<i className={"pi pi-align-justify"}/>}>
+                                        <Button className={"w-32"} startContent={<i className={"pi pi-align-justify"}/>}>
                                             Draft
                                         </Button>
                                     ) : editableSurvey?.status === "ACTIVE" ? (
@@ -163,20 +148,15 @@ function CompanySurveysDashboard() {
                                         endContent={<i className={"pi pi-share-alt"} />}
                                         onPress={onOpen}
                                     >
-                                        {
-                                            editableSurvey?.privacyStatus === "ACTIVE" ? (
-                                                <p>Publish the survey to get the link</p>
-                                            ) : (
-                                                <p>Share survey</p>
-                                            )
-                                        }
+                                        {editableSurvey?.privacyStatus === "ACTIVE" ? (
+                                            <p>Publish the survey to get the link</p>
+                                        ) : (
+                                            <p>Share survey</p>
+                                        )}
                                     </Button>
-                                    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                                    <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior={"outside"}>
                                         <ModalContent>
-                                            {
-                                                (onClose) =>
-                                                    <ShareSurveyLinkModal surveyId={editableSurvey.id} onClose={onClose} />
-                                            }
+                                            {onClose => <ShareSurveyLinkModal surveyId={editableSurvey.id} onClose={onClose} />}
                                         </ModalContent>
                                     </Modal>
                                 </div>
@@ -199,27 +179,25 @@ function CompanySurveysDashboard() {
                                     <i className="pi pi-save mr-2"/>
                                     Save Changes
                                 </Button>
-                                <Button color="secondary" className="w-full" onClick={showPreview}>
+                                <Button color="secondary" className="w-full" onClick={onOpenPreview}>
                                     <i className="pi pi-eye mr-2"/>
                                     Preview
                                 </Button>
+                                <Modal isOpen={isOpenPreview} onOpenChange={onOpenChangePreview} scrollBehavior={"outside"}>
+                                    <ModalContent>
+                                        {onClose => <SurveyPreviewModal survey={editableSurvey} onClose={onClose} />}
+                                    </ModalContent>
+                                </Modal>
                                 {editableSurvey?.status === "DRAFT" ? (
-                                    <Button onClick={publishSurvey}
-                                            className={"w-full button-tertiary"}
-                                            startContent={<i className={"pi pi-share-alt"}/>}>
+                                    <Button onClick={publishSurvey} className={"w-full button-tertiary"} startContent={<i className={"pi pi-share-alt"}/>}>
                                         Publish
                                     </Button>
                                 ) : editableSurvey?.status === "ACTIVE" ? (
-                                    <Button onClick={closeSurvey}
-                                            color={"danger"} className={"w-full"}
-                                            startContent={<i className={"pi pi-times"}/>}>
+                                    <Button onClick={closeSurvey} color={"danger"} className={"w-full"} startContent={<i className={"pi pi-times"}/>}>
                                         Close survey
                                     </Button>
                                 ) : editableSurvey?.status === "CLOSED" ? (
-                                    <Button onClick={publishSurvey}
-                                            color={"warning"}
-                                            className={"w-full"}
-                                            startContent={<i className={"pi pi-share"}/>}>
+                                    <Button onClick={publishSurvey} color={"warning"} className={"w-full"} startContent={<i className={"pi pi-share"}/>}>
                                         Reopen survey
                                     </Button>
                                 ) : (
@@ -248,8 +226,7 @@ function CompanySurveysDashboard() {
                                 />
                             )}
                             {currentPage === "responses" &&
-                                <SurveyResponses
-                                    survey={editableSurvey}/>
+                                <SurveyResponses survey={editableSurvey}/>
                             }
                             {currentPage === "settings" &&
                                 <SurveySettings

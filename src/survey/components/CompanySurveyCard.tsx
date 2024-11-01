@@ -31,7 +31,7 @@ function CompanySurveyCard({ survey }: { survey: Survey }) {
                     </Button>
                 </div>
             </Card>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior={"outside"}>
                 <ModalContent>
                     {
                         (onClose) =>

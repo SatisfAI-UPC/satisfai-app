@@ -1,5 +1,5 @@
 
 export interface CreateSurveyResponse {
     givenRespondent: number;
-    answers: [];
+    answers: Record<string, string>;
 }

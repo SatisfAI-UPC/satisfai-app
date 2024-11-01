@@ -1,4 +1,5 @@
 import React from "react";
+import {Button} from "@nextui-org/react";
 
 type Props = {
   onSave: () => void;
@@ -8,18 +9,20 @@ type Props = {
 const SaveCancelButtons: React.FC<Props> = ({ onSave, onCancel }) => {
   return (
     <div className="flex gap-4 mt-4 w-full max-w-[944px]">
-      <button
+      <Button
         onClick={onSave}
-        className="bg-[#55D6B0] text-white text-base font-semibold py-2 rounded-[6px] w-full h-[52px]"
+        className="w-full"
+        color={"primary"}
       >
         Save changes
-      </button>
-      <button
+      </Button>
+      <Button
         onClick={onCancel}
-        className="bg-[#FF3D00] text-white text-base font-semibold py-2 rounded-[6px] w-full h-[52px]"
+        className="w-full"
+        color={"danger"}
       >
         Log out
-      </button>
+      </Button>
     </div>
   );
 };
