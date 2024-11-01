@@ -1,13 +1,13 @@
-const globalApiUrl = "http://localhost:8081/api/v1";
+const globalApiUrl = "https://satisfai.antarticdonkeys.com/review/api/v1";
 export { globalApiUrl };
 
-const surveyApiUrl = "http://localhost:8080/api/surveys";
+const surveyApiUrl = "https://satisfai.antarticdonkeys.com/survey/api/surveys";
 export { surveyApiUrl };
 
-const responsesApiUrl = "http://localhost:8080/api/responses";
+const responsesApiUrl = "https://satisfai.antarticdonkeys.com/survey/api/responses";
 export { responsesApiUrl };
 
-const environmentUrl = "http://localhost:5173";
+const environmentUrl = "https://satisfai-app.netlify.app";
 export { environmentUrl };
 
 export default {

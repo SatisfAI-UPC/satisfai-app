@@ -26,7 +26,10 @@ const CompanyProfile = () => {
       if (!user?.id) return;
       try {
         const data = await fetchCompanyById(user.id);
-        setCompany(data);
+        setCompany({
+          ...data,
+          name: data.name || user.name,
+        });
         setIsPublic(data.isProfilePublic);
       } catch (error) {
         toast.error("Error fetching company data");
@@ -87,37 +90,36 @@ const CompanyProfile = () => {
                             alt="Profile"
                             className="w-[195px] h-[195px] rounded-full mb-4"
                         />
-                        {company?.name}
                         <h2 className="text-[#282828] text-2xl font-semibold">{company?.name}</h2>
                         <VisibilityToggle isPublic={isPublic} onToggle={() => setIsPublic(!isPublic)}/>
                       </div>
                       <div className="space-y-3">
                         <Input
                             label="Company Name"
-                            value={company.name}
-                            onChange={(value) => setCompany({...company, name: value})}
+                            defaultValue={company.name}
+                            onChange={(e) => setCompany({...company, name: e.target.value})}
                         />
                         <Textarea
                             label="Description"
                             value={company.description}
-                            onChange={(value) => setCompany({...company, description: value})}
+                            onChange={(e) => setCompany({...company, description: e.target.value})}
                             height="100px"
                         />
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                           <Input
                               label="Address"
                               value={company.address}
-                              onChange={(value) => setCompany({...company, address: value})}
+                              onChange={(e) => setCompany({...company, address: e.target.value})}
                           />
                           <Input
                               label="Country"
                               value={company.country}
-                              onChange={(value) => setCompany({...company, country: value})}
+                              onChange={(e) => setCompany({...company, country: e.target.value})}
                           />
                           <Input
                               label="Phone Number"
                               value={company.phoneNumber}
-                              onChange={(value) => setCompany({...company, phoneNumber: value})}
+                              onChange={(e) => setCompany({...company, phoneNumber: e.target.value})}
                           />
                         </div>
                       </div>

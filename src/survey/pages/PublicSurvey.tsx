@@ -105,7 +105,7 @@ function PublicSurvey() {
                                 onPress={onOpen}>
                                 Share this survey
                             </Button>
-                            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                            <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior={"outside"}>
                                 <ModalContent>
                                     {
                                         (onClose) =>

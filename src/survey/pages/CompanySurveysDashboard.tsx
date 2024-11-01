@@ -154,7 +154,7 @@ function CompanySurveysDashboard() {
                                             <p>Share survey</p>
                                         )}
                                     </Button>
-                                    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                                    <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior={"outside"}>
                                         <ModalContent>
                                             {onClose => <ShareSurveyLinkModal surveyId={editableSurvey.id} onClose={onClose} />}
                                         </ModalContent>
@@ -183,7 +183,7 @@ function CompanySurveysDashboard() {
                                     <i className="pi pi-eye mr-2"/>
                                     Preview
                                 </Button>
-                                <Modal isOpen={isOpenPreview} onOpenChange={onOpenChangePreview}>
+                                <Modal isOpen={isOpenPreview} onOpenChange={onOpenChangePreview} scrollBehavior={"outside"}>
                                     <ModalContent>
                                         {onClose => <SurveyPreviewModal survey={editableSurvey} onClose={onClose} />}
                                     </ModalContent>

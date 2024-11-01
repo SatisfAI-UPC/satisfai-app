@@ -25,14 +25,13 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
     };
 
     const addOption = () => {
-        const updatedOptions = [...editableQuestion.options];
-        updatedOptions.push("");
+        const updatedOptions = [...editableQuestion.options, ""];
         const updatedQuestion = { ...editableQuestion, options: updatedOptions };
         setEditableQuestion(updatedQuestion);
         onUpdate(updatedQuestion);
-    }
+    };
 
-    const renderInputField = () => {
+    const renderInputField = (options) => {
         switch (editableQuestion.type) {
             case "TEXT":
                 return (
@@ -46,7 +45,7 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
             case "MULTIPLE_CHOICE":
                 return (
                     <div className="flex flex-col gap-2 mt-2">
-                        {editableQuestion.options?.map(({option}, index) => (
+                        {options.map((option, index) => (
                             <Input
                                 key={index}
                                 value={option}
@@ -86,8 +85,8 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
                     <i className="pi pi-trash" />
                 </Button>
             </div>
-            <div className="text-grey mt-2">{renderInputField()}</div>
-            <Button isIconOnly onClick={ addOption } className={"mt-2"}>
+            <div className="text-grey mt-2">{renderInputField(editableQuestion?.options)}</div>
+            <Button isIconOnly onClick={addOption} className={"mt-2"}>
                 <i className="pi pi-plus" />
             </Button>
             <div className="mt-4">
