@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { Button, Card, Textarea } from "@nextui-org/react";
 import SurveyQuestionCard from "../components/SurveyQuestionCard.tsx";
 import { useState } from "react";

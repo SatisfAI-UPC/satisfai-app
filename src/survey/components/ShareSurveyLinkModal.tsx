@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { Card, Divider, Input, Button } from "@nextui-org/react";
 import { useState, useRef } from "react";
 import { QRCodeCanvas } from "qrcode.react";

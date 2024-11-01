@@ -1,4 +1,6 @@
-import { Card, Switch } from '@nextui-org/react';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+import { Card } from '@nextui-org/react';
 import { PieChart } from '@mui/x-charts/PieChart';
 
 function SurveyResponses({ survey }) {

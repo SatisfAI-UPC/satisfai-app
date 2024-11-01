@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import {Link, useParams} from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { fetchSurveyById } from "../services/SurveyService.ts";

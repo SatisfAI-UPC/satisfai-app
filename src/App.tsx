@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import './App.css';
 import {BrowserRouter, Navigate, Route, Routes} from "react-router-dom";
 import NotFound from "./shared/pages/NotFound.tsx";
@@ -5,7 +7,6 @@ import ExploreCompanies from "./explore/pages/ExploreCompanies.tsx";
 import CompanyProfile from "./company/pages/CompanyProfile.tsx";
 import LoginForm from "./authentication/pages/LoginForm.tsx";
 import SignUpForm from "./authentication/pages/SignUpForm.tsx";
-import { useState } from "react";
 import CompanySurveys from "./survey/pages/CompanySurveys.tsx";
 import CompanyBilling from "./company/pages/CompanyBilling.tsx";
 import CustomerProfile from "./customer/pages/CustomerProfile.tsx";

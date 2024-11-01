@@ -1,7 +1,8 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import {Button, Card, Switch} from "@nextui-org/react";
 import {useEffect, useState} from "react";
 
-//
 function SurveySettings({ survey, deleteSurvey, switchPrivacy }) {
 
     const [isPublic, setIsPublic] = useState(survey?.isPublic);

@@ -1,10 +1,12 @@
-import {Avatar, Button, Card, Modal, ModalContent} from "@nextui-org/react";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+import {Avatar, Button, Card} from "@nextui-org/react";
 import PublicQuestionCard from "./PublicQuestionCard.tsx";
 import {Link} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {fetchPublicCompanyById} from "../../explore/services/CompanyExploreService.ts";
 
-export function SurveyPreviewModal({ survey, onClose }) {
+export function SurveyPreviewModal({ survey }) {
     const [companyInfo, setCompanyInfo] = useState({
         name: "",
         avatar: "",

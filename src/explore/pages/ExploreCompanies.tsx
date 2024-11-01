@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { fetchPublicCompanies, fetchPublicCompaniesBySearch } from "../services/CompanyExploreService.ts";

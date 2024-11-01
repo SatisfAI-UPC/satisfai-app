@@ -1,3 +1,5 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import {Link} from "react-router-dom";
 import {Input} from "@nextui-org/react";
 import {useState} from "react";

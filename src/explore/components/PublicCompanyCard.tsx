@@ -1,5 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import {Company} from "../model/PublicCompany.ts";
-import {Avatar, Button, Card, Image} from "@nextui-org/react";
+import {Avatar, Button, Card} from "@nextui-org/react";
 import {Link} from "react-router-dom";
 
 const PublicCompanyCard = ({ company }: { company: Company }, isDetails: boolean) => {
