@@ -9,6 +9,7 @@ import {createNewResponse} from "../services/ResponseService.ts";
 import {toast, ToastContainer} from "react-toastify";
 import {useSelector} from "react-redux";
 import {ShareSurveyLinkModal} from "../components/ShareSurveyLinkModal.tsx";
+import {CreateSurveyResponse} from "../model/CreateSurveyResponse.ts";
 
 function PublicSurvey() {
     const { id } = useParams();
@@ -45,7 +46,7 @@ function PublicSurvey() {
     const handleResponseChange = (questionId, answer) => {
         setResponses((prevResponses) => ({
             ...prevResponses,
-            [questionId]: answer,
+            [(questionId)]: answer,
         }));
     };
 
@@ -53,11 +54,19 @@ function PublicSurvey() {
 
     const handleSubmit = async () => {
         try {
-            const responsePayload = {
+            const responsePayload: CreateSurveyResponse = {
                 givenRespondent: user?.id || null,
-                answers: responses,
+                answers: Object.fromEntries(
+                    Object.entries(responses).map(([questionId, answer]) => [String(questionId), String(answer)])
+                ),
             };
-            await createNewResponse(id, responsePayload)
+
+            if (survey?.id === undefined) {
+                toast(`There was an error: No survey id available`, {type: "error"});
+                return;
+            }
+
+            await createNewResponse(survey?.id, responsePayload)
                 .then(() => {
                     setIsSubmitted(true);
                     setResponses({});
@@ -82,10 +91,17 @@ function PublicSurvey() {
             <div className="flex items-center justify-center p-2 md:p-4">
                 <Card className="p-6 w-full md:w-1/2 grid gap-2">
                     {isSubmitted ? (
-                        <div className="text-center">
-                            <h2 className="text-2xl font-bold text-green-600">Thank you for your response!</h2>
+                        <div className="text-center grid gap-2">
+                            <Avatar
+                                src={companyInfo?.avatar}
+                                alt={companyInfo?.name}
+                                size="lg"
+                                className="mx-auto"
+                            />
+                            <h2 className="text-2xl font-bold text-primary">Thank you for your response!</h2>
                             <p>Your answers have been successfully submitted.</p>
                             <Button
+                                color={"secondary"}
                                 onPress={onOpen}>
                                 Share this survey
                             </Button>

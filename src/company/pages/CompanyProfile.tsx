@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ProfileSwitcher from "../components/ProfileSwitcher";
-import EditableField from "../components/EditableField";
 import VisibilityToggle from "../components/VisibilityToggle";
 import SaveCancelButtons from "../components/SaveCancelButtons";
-import { fetchCompanyById, updateCompany } from "../services/CompanyService";
+import {fetchCompanyById, updateCompanyById} from "../services/CompanyService";
 import { Company } from "../model/Company";
 import { motion } from "framer-motion";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { clearToken } from "../../authentication/services/AuthSlice";
+import {Avatar, Card, Input, Textarea} from "@nextui-org/react";
+import {useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {CompanyUpdateRequest} from "../model/CompanyUpdateRequest.ts";
 
 const CompanyProfile = () => {
   const [activeTab, setActiveTab] = useState("Profile");
@@ -32,88 +34,103 @@ const CompanyProfile = () => {
     };
     fetchData();
   }, [user]);
-  
+
 
   const handleSave = async () => {
     if (!company) return;
     try {
       const updatedCompany = { ...company, isProfilePublic: isPublic };
-      await updateCompany(user.id, updatedCompany);
+      const updateCompanyRequestData: CompanyUpdateRequest = {
+        name: updatedCompany.name,
+        phoneNumber: updatedCompany.phoneNumber,
+        country: updatedCompany.country,
+        description: updatedCompany.description,
+        address: updatedCompany.address,
+        website: "",
+        profilePictureUrl: updatedCompany.profilePictureUrl,
+        industry: "",
+        isProfilePublic: updatedCompany.isProfilePublic,
+      }
+      await updateCompanyById(user.id || null, updateCompanyRequestData);
       toast.success("Profile updated successfully!");
     } catch (error) {
       toast.error("Error updating profile");
     }
   };
 
+  const navigate = useNavigate();
+
   const handleLogout = () => {
     dispatch(clearToken());
+    navigate("/");
     toast.info("Logged out successfully");
   };
 
   return (
-    <div className="w-full max-w-[944px] mx-auto p-4">
-      <ToastContainer position="top-right" autoClose={3000} />
-      <ProfileSwitcher onSelect={setActiveTab} activeTab={activeTab} />
-      {company && (
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          transition={{ duration: 0.3 }}
-        >
-          {activeTab === "Profile" && (
-            <>
-              <div className="flex flex-col items-center mb-4">
-                <img
-                  src={company.profilePictureUrl}
-                  alt="Profile"
-                  className="w-[195px] h-[195px] rounded-full mb-4"
-                />
-                <h2 className="text-[#282828] text-2xl font-semibold">{company.name}</h2>
-                <p className="text-[#282828] text-base font-medium mb-2">{company.email}</p>
-                <VisibilityToggle isPublic={isPublic} onToggle={() => setIsPublic(!isPublic)} />
-              </div>
-              <div className="space-y-3">
-                <EditableField
-                  label="Company Name"
-                  value={company.name}
-                  onChange={(value) => setCompany({ ...company, name: value })}
-                />
-                <EditableField
-                  label="Description"
-                  value={company.description}
-                  multiline={true}
-                  onChange={(value) => setCompany({ ...company, description: value })}
-                  height="100px"
-                />
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <EditableField
-                    label="Address"
-                    value={company.address}
-                    onChange={(value) => setCompany({ ...company, address: value })}
-                  />
-                  <EditableField
-                    label="Country"
-                    value={company.country}
-                    onChange={(value) => setCompany({ ...company, country: value })}
-                  />
-                  <EditableField
-                    label="Phone Number"
-                    value={company.phoneNumber}
-                    onChange={(value) => setCompany({ ...company, phoneNumber: value })}
-                  />
-                </div>
-              </div>
-              <div className="flex justify-center mt-4">
-                <SaveCancelButtons onSave={handleSave} onCancel={handleLogout} />
-              </div>
-            </>
-          )}
-          {activeTab === "Reviews" && <div className="text-center mt-8">No reviews available</div>}
-        </motion.div>
-      )}
-    </div>
+      <div className="w-full max-w-[944px] mx-auto p-4">
+        <ToastContainer position="top-right" autoClose={3000} />
+        <ProfileSwitcher onSelect={setActiveTab} activeTab={activeTab} />
+        {company && (
+            <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.3 }}
+            >
+              {activeTab === "Profile" && (
+                  <>
+                    <Card className={"p-4 md:p-8"}>
+                      <div className="flex flex-col items-center mb-4">
+                        <Avatar
+                            src={company.profilePictureUrl}
+                            alt="Profile"
+                            className="w-[195px] h-[195px] rounded-full mb-4"
+                        />
+                        {company?.name}
+                        <h2 className="text-[#282828] text-2xl font-semibold">{company?.name}</h2>
+                        <VisibilityToggle isPublic={isPublic} onToggle={() => setIsPublic(!isPublic)}/>
+                      </div>
+                      <div className="space-y-3">
+                        <Input
+                            label="Company Name"
+                            value={company.name}
+                            onChange={(value) => setCompany({...company, name: value})}
+                        />
+                        <Textarea
+                            label="Description"
+                            value={company.description}
+                            onChange={(value) => setCompany({...company, description: value})}
+                            height="100px"
+                        />
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                          <Input
+                              label="Address"
+                              value={company.address}
+                              onChange={(value) => setCompany({...company, address: value})}
+                          />
+                          <Input
+                              label="Country"
+                              value={company.country}
+                              onChange={(value) => setCompany({...company, country: value})}
+                          />
+                          <Input
+                              label="Phone Number"
+                              value={company.phoneNumber}
+                              onChange={(value) => setCompany({...company, phoneNumber: value})}
+                          />
+                        </div>
+                      </div>
+                      <div className="flex justify-center mt-4">
+                        <SaveCancelButtons onSave={handleSave} onCancel={handleLogout}/>
+                      </div>
+                    </Card>
+                  </>
+              )}
+              {activeTab === "Reviews" && <div className="text-center mt-8">No reviews available</div>}
+            </motion.div>
+        )}
+      </div>
   );
 };
 
