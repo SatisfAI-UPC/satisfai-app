@@ -66,7 +66,7 @@ export function SurveyPreviewModal({ survey }) {
                             Made with SatisfAI
                         </p>
                         <img
-                            src={"../../src/assets/satisfai-icon.png"}
+                            src={"/satisfai-icon.png"}
                             className={"w-2 md:w-4 h-auto"}
                             alt={"SatisfAI logo"}
                         />

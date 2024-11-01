@@ -43,7 +43,7 @@ function AppNavbar({ user, logout }) {
                         <Link to={defaultHome}>
                             <img
                                 className="h-8 md:h-10 w-auto"
-                                src="/src/assets/satisfai-logo.png"
+                                src="/satisfai-logo.png"
                                 alt="logo"
                             />
                         </Link>
