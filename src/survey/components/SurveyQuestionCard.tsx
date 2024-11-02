@@ -3,7 +3,7 @@
 import { Card, Textarea, Input, Button, Switch } from "@nextui-org/react";
 import { useState } from "react";
 
-function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
+function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete, onDeleteOption }) {
     const [editableQuestion, setEditableQuestion] = useState(surveyQuestion);
 
     const handleTextChange = (event) => {
@@ -33,6 +33,11 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
         onUpdate(updatedQuestion);
     };
 
+    const handleOptionsDelete = (option:string) => {
+        onDeleteOption(option);
+        editableQuestion.options = editableQuestion.options.filter((opt) => opt !== option);
+    }
+
     const renderInputField = (options) => {
         switch (editableQuestion.type) {
             case "TEXT":
@@ -48,13 +53,17 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
                 return (
                     <div className="flex flex-col gap-2 mt-2">
                         {options.map((option, index) => (
-                            <Input
-                                key={index}
-                                value={option}
-                                onChange={(e) => handleOptionChange(index, e.target.value)}
-                                placeholder={`Option ${index + 1}`}
-                                className="w-full"
-                            />
+                            <div key={index} className={"flex gap-1 items-center"}>
+                                <Input
+                                    value={option}
+                                    onChange={(e) => handleOptionChange(index, e.target.value)}
+                                    placeholder={`Option ${index + 1}`}
+                                    className="w-full"
+                                />
+                                <Button isIconOnly onClick={() => handleOptionsDelete(option)}>
+                                    <i className="pi pi-trash" />
+                                </Button>
+                            </div>
                         ))}
                     </div>
                 );
@@ -83,7 +92,7 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete }) {
                     onChange={handleTextChange}
                     fullWidth
                 />
-                <Button isIconOnly color="danger" onClick={onDelete}>
+                <Button isIconOnly color="danger" onClick={() => onDelete(surveyQuestion.id)}>
                     <i className="pi pi-trash" />
                 </Button>
             </div>
