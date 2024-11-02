@@ -49,7 +49,7 @@ function SignUpForm() {
             <div className="bg-white w-full md:w-1/2 flex flex-col gap-2 md:gap-6 drop-shadow-xl p-6 md:p-10">
                 <Link to={"/"} className={"grid items-center text-center gap-1"}>
                     <img
-                        src={"src/assets/satisfai-icon.png"} alt={"SatisfAI"}
+                        src={"/satisfai-icon.png"} alt={"SatisfAI"}
                         className={"w-12 md:w-16 mx-auto"} />
                 </Link>
                 <h1 className={"font-bold text-xl md:text-5xl text-center"}>
