@@ -169,15 +169,17 @@ function CompanySurveysDashboard() {
                                     onChange={handleSurveyTitleChange}
                                     startContent={<i className="pi pi-pencil text-secondary text-sm"/>}
                                     fullWidth
+                                    isDisabled={editableSurvey?.status !== "DRAFT"}
                                 />
                                 <Textarea
                                     label="Survey Description"
                                     value={editableSurvey?.description || ""}
                                     onChange={handleSurveyDescriptionChange}
+                                    isDisabled={editableSurvey?.status !== "DRAFT"}
                                 />
                             </div>
                             <div className="flex flex-col gap-1 md:gap-2 w-full md:w-auto">
-                                <Button color="primary" className="w-full" onClick={saveChanges}>
+                                <Button color="primary" className="w-full" onClick={saveChanges} isDisabled={editableSurvey?.status !== "DRAFT"}>
                                     <i className="pi pi-save mr-2"/>
                                     Save Changes
                                 </Button>
@@ -185,7 +187,7 @@ function CompanySurveysDashboard() {
                                     <i className="pi pi-eye mr-2"/>
                                     Preview
                                 </Button>
-                                <Modal isOpen={isOpenPreview} onOpenChange={onOpenChangePreview} scrollBehavior={"outside"}>
+                                <Modal isOpen={isOpenPreview} onOpenChange={onOpenChangePreview} scrollBehavior={"outside"} size={"5xl"}>
                                     <ModalContent>
                                         {onClose => <SurveyPreviewModal survey={editableSurvey} onClose={onClose} />}
                                     </ModalContent>
@@ -207,7 +209,7 @@ function CompanySurveysDashboard() {
                                         Error
                                     </Button>
                                 )}
-                                <Button color="danger" className="w-full" onClick={resetChanges}>
+                                <Button color="danger" className="w-full" onClick={resetChanges} isDisabled={editableSurvey?.status !== "DRAFT"}>
                                     <i className="pi pi-refresh mr-2"/>
                                     Reset Changes
                                 </Button>
@@ -219,6 +221,19 @@ function CompanySurveysDashboard() {
                             <h1 className={"link-primary"} onClick={() => setCurrentPage("edit")}>Edit</h1>
                             <h1 className={"link-primary"} onClick={() => setCurrentPage("responses")}>Responses</h1>
                             <h1 className={"link-primary"} onClick={() => setCurrentPage("settings")}>Settings</h1>
+                        </div>
+                        <div className={"text-center font-medium py-2 text-lg"}>
+                            {
+                                editableSurvey?.status === "DRAFT" ? (
+                                    <p className={"text-warning"}>The survey is in draft mode. You can edit and save changes.</p>
+                                ) : editableSurvey?.status === "ACTIVE" ? (
+                                    <p className={"text-primary"}>The survey has been published. You can no longer edit the survey.</p>
+                                ) : editableSurvey?.status === "CLOSED" ? (
+                                    <p className={"text-warning"}>The survey is closed.</p>
+                                ) : (
+                                    <p className={"text-danger"}>There was an error loading the survey status.</p>
+                                )
+                            }
                         </div>
                         <div className={"flex flex-col items-center gap-4"}>
                             {currentPage === "edit" && (
@@ -237,7 +252,8 @@ function CompanySurveysDashboard() {
                                     switchPrivacy={switchPrivacy}
                                 />
                             }
-                            <Button onClick={saveChanges} className="w-full md:w-1/2 button-primary">
+                            <Button onClick={saveChanges} className="w-full md:w-1/2 button-primary"
+                                    isDisabled={editableSurvey?.status !== "DRAFT"}>
                                 Save Changes
                             </Button>
                         </div>

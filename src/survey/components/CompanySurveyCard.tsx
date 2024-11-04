@@ -13,22 +13,40 @@ function CompanySurveyCard({ survey }: { survey: Survey }) {
         <>
             <Card className={"p-4"}>
                 <div className={"flex justify-between items-center"}>
-                    {/* Only wrap the title and date in Link */}
                     <Link to={`/company-surveys/${survey.id}/edit`} className={"flex-1 grid gap-2"}>
-                        <div className={"font-medium text-lg truncate"}>{survey.title}</div>
+                        <div className={"flex gap-1 items-center"}>
+                            <div
+                                color={
+                                    survey.status === "ACTIVE" ? "primary" : survey.status === "DRAFT" ? "default" : "error"
+                                }
+                            >
+                                {
+                                    survey.status === "ACTIVE" ?
+                                        <i className={"pi pi-check"}/> :
+                                        survey.status === "DRAFT" ?
+                                            <i className={"pi pi-align-justify"}/> :
+                                            <i className={"pi pi-times"}/>
+                                }
+                            </div>
+                            <h1 className={"font-medium text-lg truncate"}>
+                                {survey.title}
+                            </h1>
+                        </div>
                         <div className={"flex gap-1 text-grey items-center"}>
-                            <i className={"pi pi-calendar"} />
+                            <i className={"pi pi-calendar"}/>
                             <div>Created {formatDate(survey.createdAt)}</div>
                         </div>
                     </Link>
-                    <Button
-                        isIconOnly
-                        className={"button-tertiary"}
-                        isDisabled={survey.status !== "ACTIVE"}
-                        onPress={onOpen}
-                    >
-                        <i className={"pi pi-share-alt"} />
-                    </Button>
+                    <div className={"flex gap-1"}>
+                        <Button
+                            isIconOnly
+                            className={"button-tertiary"}
+                            isDisabled={survey.status !== "ACTIVE"}
+                            onPress={onOpen}
+                        >
+                            <i className={"pi pi-share-alt"} />
+                        </Button>
+                    </div>
                 </div>
             </Card>
             <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior={"outside"}>
