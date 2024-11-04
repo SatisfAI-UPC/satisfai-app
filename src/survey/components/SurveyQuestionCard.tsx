@@ -3,7 +3,7 @@
 import { Card, Textarea, Input, Button, Switch } from "@nextui-org/react";
 import { useState } from "react";
 
-function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete, onDeleteOption }) {
+function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete, onDeleteOption, isDisabled }) {
     const [editableQuestion, setEditableQuestion] = useState(surveyQuestion);
 
     const handleTextChange = (event) => {
@@ -59,8 +59,9 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete, onDeleteOption
                                     onChange={(e) => handleOptionChange(index, e.target.value)}
                                     placeholder={`Option ${index + 1}`}
                                     className="w-full"
+                                    isDisabled={isDisabled}
                                 />
-                                <Button isIconOnly onClick={() => handleOptionsDelete(option)}>
+                                <Button isIconOnly onClick={() => handleOptionsDelete(option)} isDisabled={isDisabled}>
                                     <i className="pi pi-trash" />
                                 </Button>
                             </div>
@@ -91,19 +92,20 @@ function SurveyQuestionCard({ surveyQuestion, onUpdate, onDelete, onDeleteOption
                     value={editableQuestion.text}
                     onChange={handleTextChange}
                     fullWidth
+                    isDisabled={isDisabled}
                 />
-                <Button isIconOnly color="danger" onClick={() => onDelete(surveyQuestion.id)}>
+                <Button isIconOnly color="danger" onClick={() => onDelete(surveyQuestion.id)} isDisabled={isDisabled}>
                     <i className="pi pi-trash" />
                 </Button>
             </div>
             <div className="text-grey mt-2">{renderInputField(editableQuestion?.options)}</div>
-            <Button isIconOnly onClick={addOption} className={"mt-2"}>
+            <Button isIconOnly onClick={addOption} className={"mt-2"} isDisabled={isDisabled}>
                 <i className="pi pi-plus" />
             </Button>
             <div className="mt-4">
                 <label className="flex items-center gap-2">
                     <span>Mandatory:</span>
-                    <Switch checked={editableQuestion.isMandatory} onChange={handleMandatoryToggle} />
+                    <Switch checked={editableQuestion.isMandatory} onChange={handleMandatoryToggle} isDisabled={isDisabled} />
                 </label>
             </div>
         </Card>

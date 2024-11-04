@@ -95,6 +95,7 @@ function EditSurvey({ editableSurvey, setEditableSurvey }) {
                         surveyQuestion={question}
                         onUpdate={updateQuestion}
                         onDelete={deleteQuestion}
+                        isDisabled={editableSurvey?.status !== "DRAFT"}
                         onDeleteOption={(text) => deleteOption(question.id, text)}
                     />
                 ))}
@@ -102,7 +103,7 @@ function EditSurvey({ editableSurvey, setEditableSurvey }) {
             <div className={"flex flex-col items-center gap-2 w-full"}>
                 <Dropdown>
                     <DropdownTrigger>
-                        <Button className="w-full button-secondary mt-2">
+                        <Button className="w-full button-secondary mt-2" isDisabled={editableSurvey?.status !== "DRAFT"}>
                             Add Question
                         </Button>
                     </DropdownTrigger>
@@ -130,7 +131,7 @@ function EditSurvey({ editableSurvey, setEditableSurvey }) {
                             input: "resize-y min-h-[12px]",
                         }}
                         color={"warning"}
-                        disabled={loadingAIQuestion}
+                        disabled={loadingAIQuestion || editableSurvey?.status !== "DRAFT"}
                         label="Generate questions with AI ✨"
                         value={generateQuestionPrompt}
                         onChange={(e) => setGenerateQuestionPrompt(e.target.value)}
@@ -138,7 +139,7 @@ function EditSurvey({ editableSurvey, setEditableSurvey }) {
                     <Button
                         isIconOnly
                         color={"secondary"}
-                        disabled={loadingAIQuestion}
+                        disabled={loadingAIQuestion || editableSurvey?.status !== "DRAFT"}
                         onClick={handleOpenAIRecommendation}
                     >
                         {loadingAIQuestion ? (

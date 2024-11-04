@@ -23,8 +23,7 @@ function CompanySurveys() {
 
     const {
         status,
-        error, data:
-            surveys
+        data: surveys
     } = useQuery({
         queryKey: ["surveys", page, user?.id],
         queryFn: () => fetchSurveysByCompanyId(user?.id),
