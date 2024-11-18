@@ -1,5 +1,8 @@
-const globalApiUrl = "https://satisfai.antarticdonkeys.com/review/api/v1";
-export { globalApiUrl };
+ const globalApiUrl = "https://satisfai.antarticdonkeys.com/review/api/v1";
+ export { globalApiUrl };
+
+//  const globalApiUrl = "http://localhost:8080/api/v1";
+//  export { globalApiUrl };
 
 const surveyApiUrl = "https://satisfai.antarticdonkeys.com/survey/api/surveys";
 export { surveyApiUrl };
@@ -9,6 +12,7 @@ export { responsesApiUrl };
 
 const environmentUrl = "https://satisfai-app.netlify.app";
 export { environmentUrl };
+
 
 export default {
     globalApiUrl,
