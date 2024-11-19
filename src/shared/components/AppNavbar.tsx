@@ -12,6 +12,7 @@ function AppNavbar({ user, logout }) {
 
     const customerLinks = [
         { to: "/explore-companies", label: "Companies" },
+        { to: "/customer-profile", label: "Profile" },
         { to: "/customer-reviews", label: "Reviews" },
         { to: "/customer-surveys", label: "Surveys" },
     ];
