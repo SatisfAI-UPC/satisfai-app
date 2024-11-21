@@ -51,9 +51,9 @@ const CompanyProfile = () => {
         country: updatedCompany.country,
         description: updatedCompany.description,
         address: updatedCompany.address,
-        website: "",
+        website: updatedCompany.website,
         profilePictureUrl: updatedCompany.profilePictureUrl,
-        industry: "",
+        industry: updatedCompany.industry,
         isProfilePublic: updatedCompany.isProfilePublic,
       }
       await updateCompanyById(user.id || null, updateCompanyRequestData);
@@ -122,6 +122,18 @@ const CompanyProfile = () => {
                               label="Phone Number"
                               value={company.phoneNumber}
                               onChange={(e) => setCompany({...company, phoneNumber: e.target.value})}
+                          />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Input
+                              label="Website"
+                              value={company.website}
+                              onChange={(e) => setCompany({...company, website: e.target.value})}
+                          />
+                          <Input
+                              label="Industry"
+                              value={company.industry}
+                              onChange={(e) => setCompany({...company, industry: e.target.value})}
                           />
                         </div>
                       </div>
