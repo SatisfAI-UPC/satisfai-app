@@ -184,7 +184,7 @@ function ExploreCompanies() {
                 <div className="grid md:grid-cols-2 gap-4 mt-4">
                     {filteredCompanies && filteredCompanies.length > 0 ? (
                         filteredCompanies.map((company: Company) => (
-                            <PublicCompanyCard key={company.id} company={company}/>
+                            <PublicCompanyCard key={company.id} company={company} isDetails={false} />
                         ))
                     ) : (
                         <p className="text-lg">No companies found for the selected filters.</p>

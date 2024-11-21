@@ -2,10 +2,17 @@
 // @ts-nocheck
 import { useQuery } from "@tanstack/react-query";
 import { fetchPublicCompanyById } from "../services/CompanyExploreService.ts";
-import { useParams } from "react-router-dom";
+import {Link, useParams} from "react-router-dom";
+import PublicCompanyCard from "../components/PublicCompanyCard.tsx";
+import {Button, Modal, ModalBody, ModalContent, ModalHeader, useDisclosure} from "@nextui-org/react";
+import ReviewCompanyForm from "../components/ReviewCompanyForm.tsx";
+import {useSelector} from "react-redux";
+import CompanyReviewsList from "../components/CompanyReviewsList.tsx";
 
 const ExploreCompanyDetails = () => {
     const { id } = useParams();
+    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const user = useSelector((state) => state.auth.user);
 
     const {
         status: companyStatus,
@@ -24,15 +31,54 @@ const ExploreCompanyDetails = () => {
         return <p>Error: {companyError.message}</p>;
     }
 
+    const onPublish = () => {
+        onOpenChange(false);
+    }
+
     return (
         <div>
-            <h1>Company Details</h1>
+            <h1 className={"page-title"}>Company Details</h1>
             {company && (
                 <div>
-                    <h2>{company.name}</h2>
-                    <p>Industry: {company.industry}</p>
-                    <p>Location: {company.country}</p>
-                    <p>Description: {company.description}</p>
+                    <PublicCompanyCard
+                        company={company} isDetails={true}/>
+                    {
+                        user?.role !== "COMPANY" && (
+                            <div className={"flex gap-2 w-full my-4"}>
+                                <Button className={"button-tertiary w-full"} variant="contained"
+                                        isDisabled={!user}
+                                        onPress={onOpen}>
+                                    {
+                                        user ? "Review" : "Login to Review"
+                                    }
+                                </Button>
+                                <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="3xl">
+                                    {
+                                        <ModalContent>
+                                            <ModalHeader className="flex flex-col gap-1">Review</ModalHeader>
+                                            <ModalBody>
+                                                <ReviewCompanyForm company={company} onPublish={onPublish}/>
+                                            </ModalBody>
+                                        </ModalContent>
+                                    }
+                                </Modal>
+                                <div className={"w-full"}>
+                                    <Link to={`/company/surveys/${company?.id}`}>
+                                        <Button
+                                            className={"button-primary w-full"}
+                                            variant="contained"
+                                            color={"secondary"}
+                                            rounded
+                                            shadow>
+                                            Surveys
+                                        </Button>
+                                    </Link>
+                                </div>
+                            </div>
+                        )
+                    }
+                    <CompanyReviewsList
+                        company={company}/>
                 </div>
             )}
         </div>

@@ -19,6 +19,7 @@ import {clearToken} from "./authentication/services/AuthSlice.ts";
 import {useDispatch, useSelector} from "react-redux";
 import CompanySurveysDashboard from "./survey/pages/CompanySurveysDashboard.tsx";
 import PublicSurvey from "./survey/pages/PublicSurvey.tsx";
+import CompanyActiveSurveys from "./explore/pages/CompanyActiveSurveys.tsx";
 
 function App() {
 
@@ -73,6 +74,7 @@ function App() {
                     {/* DMZ Routes */}
                     <Route path="/explore-companies" element={<ExploreCompanies />} />
                     <Route path="/company/:id" element={<ExploreCompanyDetails />} />
+                    <Route path="/company/surveys/:id" element={<CompanyActiveSurveys />} />
                     <Route path="/public-survey/:id" element={<PublicSurvey />} />
                     {user ? (
                         user.role === "CUSTOMER" ? (

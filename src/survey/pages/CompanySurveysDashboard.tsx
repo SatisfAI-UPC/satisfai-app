@@ -9,7 +9,7 @@ import {
     publishSurveyById,
     updateSurveyById,
     updateSurveyPrivacyById
-} from "../services/SurveyService.ts";
+} from "../../shared/services/SurveyService.ts";
 import {Button, Card, Input, Modal, ModalContent, Textarea, useDisclosure} from "@nextui-org/react";
 import {toast, ToastContainer} from "react-toastify";
 import {useEffect, useState} from "react";
