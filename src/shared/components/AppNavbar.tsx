@@ -14,7 +14,6 @@ function AppNavbar({ user, logout }) {
         { to: "/explore-companies", label: "Companies" },
         { to: "/customer-profile", label: "Profile" },
         { to: "/customer-reviews", label: "Reviews" },
-        { to: "/customer-surveys", label: "Surveys" },
     ];
 
     const companyLinks = [

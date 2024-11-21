@@ -2,7 +2,7 @@
 // @ts-nocheck
 import {Link, useParams} from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { fetchSurveyById } from "../services/SurveyService.ts";
+import { fetchSurveyById } from "../../shared/services/SurveyService.ts";
 import PublicQuestionCard from "../components/PublicQuestionCard.tsx";
 import {Avatar, Button, Card, Modal, ModalContent, useDisclosure} from "@nextui-org/react";
 import {useEffect, useState} from "react";
