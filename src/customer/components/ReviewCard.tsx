@@ -104,7 +104,7 @@ const ReviewCard: React.FC<Props> = ({
   };
 
   return (
-    <Card className="p-4 mb-4 border rounded-lg shadow-sm relative">
+    <Card className="mb-4 border rounded-lg shadow-sm relative p-8">
       <div className="absolute top-2 right-2">
         <Dropdown>
           <DropdownTrigger>
