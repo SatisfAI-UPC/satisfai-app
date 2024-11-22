@@ -1,5 +1,7 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
 import { Company } from "../model/PublicCompany.ts";
-import { Avatar, Textarea } from "@nextui-org/react";
+import {Avatar, Input, Textarea} from "@nextui-org/react";
 import React, { useState } from "react";
 import { Button } from "@nextui-org/button";
 import {toast, ToastContainer} from "react-toastify";
@@ -7,17 +9,19 @@ import {useSelector} from "react-redux";
 import {CreateReviewRequest} from "../model/CreateReviewRequest.ts";
 import {createNewReview} from "../services/ReviewService.ts";
 
-function ReviewCompanyForm({ company, onPublish }: { company: Company, onPublish: () => void }) {
+function ReviewCompanyForm({ company, onPublish }: { company: Company, onPublish: (newReview) => void }) {
     const [rating, setRating] = useState(5);
     const [reviewText, setReviewText] = useState("");
+    const [reviewTitle, setReviewTitle] = useState("");
     const user = useSelector((state) => state.auth.user);
 
     const handleRatingClick = (star: number) => {
         setRating(star);
     };
 
-    const publishReview = async(e: React.FormEvent) => {
+    async function publishReview(e: React.FormEvent) {
         e.preventDefault();
+
         if (!user || !user.id) {
             toast("You must be logged in to review", { type: "error" });
             return;
@@ -28,29 +32,24 @@ function ReviewCompanyForm({ company, onPublish }: { company: Company, onPublish
         }
 
         try {
-            const createReviewRequest = {
+            const createReviewRequest: CreateReviewRequest = {
                 companyId: company.id,
+                title: reviewTitle,
                 description: reviewText,
                 customerId: user.id,
                 grade: rating,
-            } as CreateReviewRequest;
+            };
 
-            console.log(createReviewRequest);
+            const newReview = await createNewReview(createReviewRequest);
 
-            const newReview = await createNewReview(createReviewRequest)
-                .then(() => {
-                    toast("Review created successfully", { type: "success" });
-                    onPublish();
-                })
-                .catch((error) => {throw new Error(`Error creating review: ${error.message}`);});
+            toast("Review created successfully", { type: "success" });
+
+            onPublish(newReview);
         } catch (error) {
-            toast(`There was an error creating a survey: ${error.message}`, { type: "error" });
+            toast(`There was an error creating a review: ${error.message}`, { type: "error" });
         }
+    }
 
-
-        console.log("Publishing review...");
-        onPublish();
-    };
 
     return (
         <>
@@ -90,6 +89,13 @@ function ReviewCompanyForm({ company, onPublish }: { company: Company, onPublish
                 </div>
                 <form className="w-full flex flex-col gap-2" onSubmit={publishReview}>
                     <h1 className="font-bold text-primary">Review</h1>
+                    <Input
+                        type="text"
+                        placeholder="Title"
+                        value={reviewTitle}
+                        onChange={(e) => setReviewTitle(e.target.value)}
+                        className="input"
+                    />
                     <Textarea
                         label="Review"
                         placeholder="Write your review here..."

@@ -1,9 +1,9 @@
-export interface PublicReview {
+export interface CustomerReview {
     id: number;
     companyId: number;
-    title: string;
+    companyName: string;
+    title: string | null;
     description: string;
-    customerId: number;
     grade: number;
     response: [];
     profilePictureUrl: string;
