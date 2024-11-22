@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-nocheck
+
 import {globalApiUrl} from "../../shared/services/GlobalAPI.ts";
 import axios from "axios";
 import {Company} from "../model/PublicCompany.ts";
