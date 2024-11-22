@@ -11,6 +11,8 @@ import {toast, ToastContainer} from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {useDispatch} from "react-redux";
 import {Role} from "../model/SignupRequest.ts";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { firebaseAuth } from "../../firebase/FireBaseConfig.js"
 
 function SignUpForm() {
     const [isVisible, setIsVisible] = useState(false);
@@ -29,6 +31,9 @@ function SignUpForm() {
     const signup = async (e) => {
         e.preventDefault();
         try {
+            // Intentar registrar al usuario en Firebase
+            const userCredential = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+
             const signUpRequest = {
                 email,
                 name,

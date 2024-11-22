@@ -15,19 +15,19 @@ function CompanySurveyCard({ survey }: { survey: Survey }) {
                 <div className={"flex justify-between items-center"}>
                     <Link to={`/company-surveys/${survey.id}/edit`} className={"flex-1 grid gap-2"}>
                         <div className={"flex gap-1 items-center"}>
-                            <div
+                            <Button
                                 color={
                                     survey.status === "ACTIVE" ? "primary" : survey.status === "DRAFT" ? "default" : "error"
                                 }
                             >
                                 {
                                     survey.status === "ACTIVE" ?
-                                        <i className={"pi pi-check"}/> :
+                                        <p>Published</p> :
                                         survey.status === "DRAFT" ?
-                                            <i className={"pi pi-align-justify"}/> :
-                                            <i className={"pi pi-times"}/>
+                                            <p>Draft</p> :
+                                            <p>Closed</p>
                                 }
-                            </div>
+                            </Button>
                             <h1 className={"font-medium text-lg truncate"}>
                                 {survey.title}
                             </h1>

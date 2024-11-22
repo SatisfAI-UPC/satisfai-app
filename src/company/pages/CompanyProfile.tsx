@@ -14,11 +14,29 @@ import {Avatar, Card, Input, Textarea} from "@nextui-org/react";
 import {useNavigate} from "react-router-dom";
 import {useEffect, useState} from "react";
 import {CompanyUpdateRequest} from "../model/CompanyUpdateRequest.ts";
+import { storage } from "../../firebase/FireBaseConfig.js"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import CompanyReviewsList from "./CompanyReviewsList.tsx";
 
 const CompanyProfile = () => {
   const [activeTab, setActiveTab] = useState("Profile");
   const [company, setCompany] = useState<Company | null>(null);
   const [isPublic, setIsPublic] = useState(false);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [profilePic, setProfilePic] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+
+      setSelectedImage(file); // Guarda el archivo real
+      const previewUrl = URL.createObjectURL(file); // Previsualiza la imagen
+      setProfilePic(previewUrl); // Actualiza la previsualización
+      /*const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);*/
+    }
+  };
 
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
@@ -33,6 +51,7 @@ const CompanyProfile = () => {
           name: data.name || user.name,
         });
         setIsPublic(data.isProfilePublic);
+        setProfilePic(data.profilePictureUrl);
       } catch (error) {
         toast.error("Error fetching company data");
       }
@@ -40,20 +59,53 @@ const CompanyProfile = () => {
     fetchData();
   }, [user]);
 
+  const uploadImageToFirebase = async () => {
+    if (!selectedImage) return null; // Verifica que haya una imagen seleccionada
+
+    try {
+      setUploading(true);
+
+      // Crear una referencia de almacenamiento en Firebase
+      const storageRef = ref(storage, `profile_pictures/${user.id}/${selectedImage.name}`);
+      await uploadBytes(storageRef, selectedImage); // Sube el archivo seleccionado
+
+      // Obtén la URL pública
+      const downloadURL = await getDownloadURL(storageRef);
+      setUploading(false);
+
+      return downloadURL;
+    } catch (error) {
+      setUploading(false);
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image");
+      return null;
+    }
+  };
+
 
   const handleSave = async () => {
     if (!company) return;
     try {
-      const updatedCompany = { ...company, isProfilePublic: isPublic };
+      // Upload image if a new one is selected
+      let profilePictureUrl = company.profilePictureUrl;
+
+      if (selectedImage) {
+        const uploadedImageUrl = await uploadImageToFirebase();
+        if (uploadedImageUrl) {
+          profilePictureUrl = uploadedImageUrl; // Actualiza con la URL de Firebase
+        }
+      }
+
+      const updatedCompany = { ...company,profilePictureUrl, isProfilePublic: isPublic };
       const updateCompanyRequestData: CompanyUpdateRequest = {
         name: updatedCompany.name,
         phoneNumber: updatedCompany.phoneNumber,
         country: updatedCompany.country,
         description: updatedCompany.description,
         address: updatedCompany.address,
-        website: "",
+        website: updatedCompany.website,
         profilePictureUrl: updatedCompany.profilePictureUrl,
-        industry: "",
+        industry: updatedCompany.industry,
         isProfilePublic: updatedCompany.isProfilePublic,
       }
       await updateCompanyById(user.id || null, updateCompanyRequestData);
@@ -88,11 +140,18 @@ const CompanyProfile = () => {
                     <Card className={"p-4 md:p-8"}>
                       <div className="flex flex-col items-center mb-4">
                         <Avatar
-                            src={company.profilePictureUrl}
+                            src={profilePic}
                             alt="Profile"
                             className="w-[195px] h-[195px] rounded-full mb-4"
                         />
-                        <h2 className="text-[#282828] text-2xl font-semibold">{company?.name}</h2>
+                        <Input
+                            type="file"
+                            id="upload"
+                            onChange={handleFileChange}
+                            accept="image/*"
+                            css={{ display: "none" }}
+                        />
+                        <h2 className="text-[#282828] text-2xl font-semibold pt-2">{company?.name}</h2>
                         <VisibilityToggle isPublic={isPublic} onToggle={() => setIsPublic(!isPublic)}/>
                       </div>
                       <div className="space-y-3">
@@ -124,6 +183,18 @@ const CompanyProfile = () => {
                               onChange={(e) => setCompany({...company, phoneNumber: e.target.value})}
                           />
                         </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          <Input
+                              label="Website"
+                              value={company.website}
+                              onChange={(e) => setCompany({...company, website: e.target.value})}
+                          />
+                          <Input
+                              label="Industry"
+                              value={company.industry}
+                              onChange={(e) => setCompany({...company, industry: e.target.value})}
+                          />
+                        </div>
                       </div>
                       <div className="flex justify-center mt-4">
                         <SaveCancelButtons onSave={handleSave} onCancel={handleLogout}/>
@@ -131,7 +202,10 @@ const CompanyProfile = () => {
                     </Card>
                   </>
               )}
-              {activeTab === "Reviews" && <div className="text-center mt-8">No reviews available</div>}
+              {
+                  activeTab === "Reviews" &&
+                  <CompanyReviewsList company={company} />
+              }
             </motion.div>
         )}
       </div>

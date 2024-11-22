@@ -1,6 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-nocheck
-import {Card, Textarea, useDisclosure} from '@nextui-org/react';
+import {Card, Divider, useDisclosure} from '@nextui-org/react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import {Button} from "@nextui-org/button";
 import {
@@ -12,31 +12,25 @@ import {
 } from "@nextui-org/modal";
 import {toast} from "react-toastify";
 import {useState} from "react";
+import {generateOpenAISurveyResponsesRecommendation} from "../services/OpenAIService.ts";
 
 function SurveyResponses({ survey }) {
-
-    const insights = [];
-
+    const [insight, setInsight] = useState(null);
     const [loadingAIRecommendation, setLoadingAIRecommendation] = useState(false);
-    const [generateInsightPrompt, setGenerateInsightPrompt] = useState("");
-    const {isOpen, onOpen, onOpenChange} = useDisclosure();
+    const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
     const getAIInsights = async () => {
-        setLoadingAIRecommendation(true);
-        if (!generateInsightPrompt || generateInsightPrompt.length < 10) {
-            toast("Please enter at least ten characters", { type: "error" });
-            setLoadingAIRecommendation(false);
-            return;
-        }
         try {
-            console.log("Getting AI insights...");
-            setGenerateInsightPrompt("");
+            onOpen();
+            setLoadingAIRecommendation(true);
+            const response = await generateOpenAISurveyResponsesRecommendation(survey.id);
+            setInsight(response.content || "No insights available");
+        } catch (error) {
+            toast(`Error getting AI insights: ${error.message || "Unknown error"}`, { type: "error" });
+        } finally {
+            setLoadingAIRecommendation(false);
         }
-        catch (error) {
-            toast(`Error getting AI insights ${error}`, { type: "error" });
-        }
-    }
-
+    };
 
     if (!survey || !survey.questions) {
         return <p>Loading survey data...</p>;
@@ -51,7 +45,7 @@ function SurveyResponses({ survey }) {
                         Number of responses:&nbsp;
                         <span>{survey.responses ? survey.responses.length : 0}</span>
                     </p>
-                    <Button onClick={onOpen} className={"button-secondary w-full"}>
+                    <Button onClick={getAIInsights} className={"button-secondary w-full"}>
                         Get AI Insights
                     </Button>
                 </div>
@@ -61,39 +55,11 @@ function SurveyResponses({ survey }) {
                             <>
                                 <ModalHeader className="flex flex-col gap-1">AI Insights✨</ModalHeader>
                                 <ModalBody>
-                                    {
-                                        insights.map((insight) => (
-                                            <div key={insight.id}>
-                                                <h3>{insight.title}</h3>
-                                                <p>{insight.description}</p>
-                                            </div>
-                                        ))}
-                                    <div className={"flex w-full gap-1 items-center"}>
-                                        <Textarea
-                                            disableAnimation
-                                            disableAutosize
-                                            classNames={{
-                                                input: "resize-y min-h-[12px]",
-                                            }}
-                                            color={"warning"}
-                                            disabled={loadingAIRecommendation}
-                                            label="Generate questions with AI ✨"
-                                            value={generateInsightPrompt}
-                                            onChange={(e) => setGenerateInsightPrompt(e.target.value)}
-                                        />
-                                        <Button
-                                            isIconOnly
-                                            color={"secondary"}
-                                            disabled={loadingAIRecommendation}
-                                            onClick={getAIInsights}
-                                        >
-                                            {loadingAIRecommendation ? (
-                                                <i className="pi pi-spinner animate-spin"/>
-                                            ) : (
-                                                <i className="pi pi-arrow-up"/>
-                                            )}
-                                        </Button>
-                                    </div>
+                                    {loadingAIRecommendation ? (
+                                        <p>Loading AI insights...</p>
+                                    ) : (
+                                        <p>{insight}</p>
+                                    )}
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button color="danger" onPress={onClose}>
@@ -110,32 +76,50 @@ function SurveyResponses({ survey }) {
                 <p>No responses yet. Check back later.</p>
             ) : (
                 survey.questions.map((question) => {
-                    if (!question.options || !survey.responses) {
-                        return null;
-                    }
-
-                    const responseCounts = question.options.map((option) => ({
-                        id: option,
-                        label: option,
-                        value: survey.responses.filter(
-                            (response) => response.answers && response.answers[question.id] === option
-                        ).length,
-                    }));
+                    const isTextQuestion = question.type === "TEXT";
+                    const questionResponses = survey.responses.map(
+                        (response) => response.answers && response.answers[question.id]
+                    );
 
                     return (
                         <Card key={question.id} className="w-full md:w-1/2 p-1 justify-center items-center">
-                            <h3 className={"font-medium"}>{question.text}</h3>
-                            <PieChart
-                                className={""}
-                                series={[
-                                    {
-                                        data: responseCounts,
-                                        innerRadius: 80
-                                    },
-                                ]}
-                                width={400}
-                                height={400}
-                            />
+                            <div className={"p-2"}>
+                                <h1 className={"font-medium page-title text-tertiary"}>{question.text}</h1>
+                            </div>
+                            <Divider/>
+                            {isTextQuestion ? (
+                                <div className="text-responses">
+                                    {questionResponses.length > 0 ? (
+                                        <ul className="max-h-96 overflow-y-auto rounded-md shadow-sm p-3">
+                                            {questionResponses.map((textResponse, index) => (
+                                                <li
+                                                    key={index}
+                                                    className="response-item p-4 border-b last:border-b-0 text-gray-700 hover:bg-gray-100"
+                                                >
+                                                    {textResponse || "No response"}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    ) : (
+                                        <p>No responses yet for this question.</p>
+                                    )}
+                                </div>
+                            ) : (
+                                <PieChart
+                                    series={[
+                                        {
+                                            data: question.options.map((option) => ({
+                                                id: option,
+                                                label: option,
+                                                value: questionResponses.filter((r) => r === option).length,
+                                            })),
+                                            innerRadius: 80,
+                                        },
+                                    ]}
+                                    width={400}
+                                    height={400}
+                                />
+                            )}
                         </Card>
                     );
                 })

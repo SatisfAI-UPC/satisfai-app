@@ -8,6 +8,8 @@ import { Checkbox } from "@nextui-org/checkbox";
 import { login as loginApi } from "../services/AuthenticationService.ts";
 import { useDispatch } from "react-redux";
 import { setToken } from "../services/AuthSlice.ts";
+import { firebaseAuth } from "../../firebase/FireBaseConfig.js"
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 function LoginForm() {
     const [isVisible, setIsVisible] = useState(false);
@@ -22,6 +24,7 @@ function LoginForm() {
     const login = async (e) => {
         e.preventDefault();
         try {
+            const userCredential = await signInWithEmailAndPassword(firebaseAuth, email, password);
             const signinRequest = { email, password };
             const token = await loginApi(signinRequest);
             dispatch(setToken(token));

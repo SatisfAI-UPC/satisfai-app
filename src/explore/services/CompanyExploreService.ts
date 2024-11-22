@@ -1,7 +1,6 @@
 import {globalApiUrl} from "../../shared/services/GlobalAPI.ts";
 import axios from "axios";
 import {Company} from "../model/PublicCompany.ts";
-import {Review} from "../model/PublicReview.ts";
 
 export function fetchPublicCompanies() {
     return axios.get<Company[]>(`${globalApiUrl}/public/companies`)

@@ -1,8 +1,8 @@
 import axios from "axios";
-import {surveyApiUrl} from "../../shared/services/GlobalAPI.ts";
-import {CreateSurveyRequest} from "../model/CreateSurveyRequest.ts";
-import {SurveyDetails} from "../model/SurveyDetails.ts";
-import {CreateSurveyQuestion} from "../model/CreateSurveyQuestion.ts";
+import {surveyApiUrl} from "./GlobalAPI.ts";
+import {CreateSurveyRequest} from "../../survey/model/CreateSurveyRequest.ts";
+import {SurveyDetails} from "../../survey/model/SurveyDetails.ts";
+import {CreateSurveyQuestion} from "../../survey/model/CreateSurveyQuestion.ts";
 
 export function fetchAllSurveys(){
     return axios.get(`${surveyApiUrl}/all`)
