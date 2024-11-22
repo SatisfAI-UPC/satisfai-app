@@ -16,6 +16,7 @@ import {useEffect, useState} from "react";
 import {CompanyUpdateRequest} from "../model/CompanyUpdateRequest.ts";
 import { storage } from "../../firebase/FireBaseConfig.js"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import CompanyReviewsList from "./CompanyReviewsList.tsx";
 
 const CompanyProfile = () => {
   const [activeTab, setActiveTab] = useState("Profile");
@@ -201,7 +202,10 @@ const CompanyProfile = () => {
                     </Card>
                   </>
               )}
-              {activeTab === "Reviews" && <div className="text-center mt-8">No reviews available</div>}
+              {
+                  activeTab === "Reviews" &&
+                  <CompanyReviewsList company={company} />
+              }
             </motion.div>
         )}
       </div>
