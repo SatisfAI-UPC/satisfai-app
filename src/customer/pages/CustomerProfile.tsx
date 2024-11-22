@@ -8,10 +8,28 @@ import "react-toastify/dist/ReactToastify.css";
 import { Avatar, Card, Input, Skeleton } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { storage } from "../../firebase/FireBaseConfig.js"
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 const CustomerProfile = () => {
   const [customer, setCustomer] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [profilePic, setProfilePic] = useState(null);
+  const [preview, setPreview] = useState(null);
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+
+      setSelectedImage(file); // Guarda el archivo real
+      const previewUrl = URL.createObjectURL(file); // Previsualiza la imagen
+      setProfilePic(previewUrl); // Actualiza la previsualización
+      /*const previewUrl = URL.createObjectURL(file);
+      setPreview(previewUrl);*/
+    }
+  };
 
   const user = useSelector((state) => state.auth.user);
   const dispatch = useDispatch();
@@ -22,6 +40,7 @@ const CustomerProfile = () => {
       try {
         const data = await fetchCustomerById(user.id);
         setCustomer(data);
+        setProfilePic(data.profilePictureUrl);
       } catch (error) {
         toast.error("Error fetching customer data");
       } finally {
@@ -31,14 +50,45 @@ const CustomerProfile = () => {
     fetchData();
   }, [user]);
 
+  const uploadImageToFirebase = async () => {
+    if (!selectedImage) return null; // Verifica que haya una imagen seleccionada
+
+    try {
+      setUploading(true);
+
+      // Crear una referencia de almacenamiento en Firebase
+      const storageRef = ref(storage, `profile_pictures/${user.id}/${selectedImage.name}`);
+      await uploadBytes(storageRef, selectedImage); // Sube el archivo seleccionado
+
+      // Obtén la URL pública
+      const downloadURL = await getDownloadURL(storageRef);
+      setUploading(false);
+
+      return downloadURL;
+    } catch (error) {
+      setUploading(false);
+      console.error("Error uploading image:", error);
+      toast.error("Failed to upload image");
+      return null;
+    }
+  };
   const handleSave = async () => {
     if (!customer) return;
     try {
+      let profilePictureUrl = company.profilePictureUrl;
+
+      if (selectedImage) {
+        const uploadedImageUrl = await uploadImageToFirebase();
+        if (uploadedImageUrl) {
+          profilePictureUrl = uploadedImageUrl; // Actualiza con la URL de Firebase
+        }
+      }
       await updateCustomer({
         id: user.id,
         name: customer.name,
         country: customer.country,
         phoneNumber: customer.phoneNumber,
+        profilePictureUrl: profilePictureUrl,
       });
       toast.success("Profile updated successfully!");
     } catch (error) {
@@ -101,11 +151,18 @@ const CustomerProfile = () => {
             <Card className="p-4 md:p-6">
               <div className="flex flex-col items-center mb-6">
                 <Avatar
-                  src={customer.profilePictureUrl}
+                  src={profilePic}
                   alt="Profile"
                   className="w-[160px] h-[160px] rounded-full mb-4"
                 />
-                <h2 className="text-[#282828] text-2xl font-semibold">
+                <Input
+                    type="file"
+                    id="upload"
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    css={{ display: "none" }}
+                />
+                <h2 className="text-[#282828] text-2xl font-semibold pt-2">
                   {customer.name}
                 </h2>
                 <p className="text-[#666666] text-[16px] font-medium">
