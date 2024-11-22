@@ -23,11 +23,9 @@ const CustomerProfile = () => {
     const file = event.target.files[0];
     if (file) {
 
-      setSelectedImage(file); // Guarda el archivo real
-      const previewUrl = URL.createObjectURL(file); // Previsualiza la imagen
-      setProfilePic(previewUrl); // Actualiza la previsualización
-      /*const previewUrl = URL.createObjectURL(file);
-      setPreview(previewUrl);*/
+      setSelectedImage(file);
+      const previewUrl = URL.createObjectURL(file);
+      setProfilePic(previewUrl);
     }
   };
 
