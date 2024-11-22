@@ -16,6 +16,7 @@ export function fetchReviewsByCompanyId(companyId: number | string) {
 export function createNewReview(createReviewRequest: CreateReviewRequest) {
     return axios.post(`${globalApiUrl}/reviews`, {
         companyId: createReviewRequest.companyId,
+        title: createReviewRequest.title,
         description: createReviewRequest.description,
         customerId: createReviewRequest.customerId,
         grade: createReviewRequest.grade,
