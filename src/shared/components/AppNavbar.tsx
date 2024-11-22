@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@nextui-org/button";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@nextui-org/dropdown";
-import { Avatar } from "@nextui-org/react";
+import {Avatar, Input} from "@nextui-org/react";
 
 function AppNavbar({ user, logout }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +19,6 @@ function AppNavbar({ user, logout }) {
     const companyLinks = [
         { to: "/company-surveys", label: "Surveys" },
         { to: "/company-profile", label: "Profile" },
-        { to: "/company-billing", label: "Billing" },
         { to: "/explore-companies", label: "Companies" },
     ];
 
